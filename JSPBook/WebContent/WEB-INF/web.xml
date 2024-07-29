@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" version="4.0">
+  <display-name>JSPBook</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  <!-- 
+  	선언적 시큐리티 처리 : web.xml 파일에 보안 구성을 작성
+  	(역할-role, 사용자-username, URL 경로)을 작성
+  	 - 역할/사용자 : tomcat-users.xml에 등록된 역할/사용자
+  web.xml : 웹 애플리케이션 배포 설명자 파일(톰캣 설정)
+   -->
+   <!-- 시큐리티 역할(role) 설정 시작 -->
+   <security-role>
+   	<role-name>tomcat</role-name>
+   </security-role>
+   <security-role>
+   	<role-name>role1</role-name>
+   </security-role>
+   <security-role>
+   	<role-name>admin</role-name>
+   </security-role>
+   <!-- 시큐리티 역할(role) 설정 끝 -->
+   
+   <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+<!-- 1번째 security01-->
+   <!-- 시큐리티 제약 사항(constraint)을 설정 시작 -->
+   <security-constraint>
+   	<web-resource-collection>
+   		<!--  웹 자원의 이름 설정(생략 가능) -->
+   		<web-resource-name>JSPBOOK</web-resource-name>
+   		<!-- 접근 제한 요청 URL -->
+   		<url-pattern>/ch10/security01.jsp</url-pattern>
+   		<!-- HTTP 메서드(get, post) -->
+   		<http-method>GET</http-method>
+   	</web-resource-collection>
+   	
+   	<!-- 권한이 부여된 사용자만이 웹 자원에 접근할 수 있도록 설정 -->
+   	<auth-constraint>
+   		<description>설명</description>
+   		<role-name>role1</role-name>
+   	</auth-constraint>
+   </security-constraint>
+   <!-- 시큐리티 제약 사항(constraint)을 설정 끝 -->
+   
+<!-- 2번째 security02-->
+   <!-- 시큐리티 제약 사항(constraint)을 설정 시작 -->
+   <security-constraint>
+   	<web-resource-collection>
+   	
+   		<!--  웹 자원의 이름 설정(생략 가능) -->
+   		<web-resource-name>JSPBOOK</web-resource-name>
+   		
+   		<!-- 접근 제한 요청 URL -->
+   		<url-pattern>/ch10/security02.jsp</url-pattern>
+   		
+   		<!-- HTTP 메서드(get, post) -->
+   		<http-method>GET</http-method>
+   
+   	</web-resource-collection>
+   	
+   	<!-- 권한이 부여된 사용자만이 웹 자원에 접근할 수 있도록 설정 -->
+   	<auth-constraint>
+   		<description>설명</description>
+   		<role-name>tomcat</role-name>
+   	</auth-constraint>
+   </security-constraint>
+   <!-- 시큐리티 제약 사항(constraint)을 설정 끝 -->
+   
+<!-- 3번째 addProducts-->
+   <!-- 시큐리티 제약 사항(constraint)을 설정 시작 -->
+   <security-constraint>
+   	<web-resource-collection>
+   	
+   		<!--  웹 자원의 이름 설정(생략 가능) -->
+   		<web-resource-name>JSPBOOK</web-resource-name>
+   		
+   		<!-- 접근 제한 요청 URL -->
+   		<url-pattern>/addProduct.jsp</url-pattern>
+   		
+   		<!-- HTTP 메서드(get, post) -->
+   		<http-method>GET</http-method>
+   
+   	</web-resource-collection>
+   	
+   	<!-- 권한이 부여된 사용자만이 웹 자원에 접근할 수 있도록 설정 -->
+   	<auth-constraint>
+   		<description>관리자만 가능</description>
+   		<role-name>admin</role-name>
+   	</auth-constraint>
+   </security-constraint>
+   <!-- 시큐리티 제약 사항(constraint)을 설정 끝 -->
+   <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+   
+   <!-- 인증(authentication) 처리를 위한 로그인 및 로그인 실패 페이지 설정 시작 -->
+   <login-config>
+   	<!-- 웹 자원에 대한 인증 처리 방식 BASIC(간단,일반) / DIGEST(암호화) 
+   							/ FORM(사용자 폼 페이지) /CLIENT-CERT(공인 키 인증) -->
+   	<auth-method>FORM</auth-method>
+   	<!-- 인증(로그인) 처리를 위한 로그인 및 오류 페이지를 설정 -->
+   	<form-login-config>
+   		<!-- 인증(로그인) 처리를 위한 로그인 페이지 설정 -->
+   		<form-login-page>/login.jsp</form-login-page>
+   		<!-- 인증(로그인) 실패 시 오류 페이지를 설정 -->
+   		<form-error-page>/login_failed.jsp</form-error-page>
+   	</form-login-config>
+   </login-config>
+   <!-- 시큐리티 인증 설정 끝 -->
+   
+   <!-- 오류가 나면 오류 타입에 맞춰 오류 처리 jsp로 매핑 -->
+   <!-- 404 : page not found. URL에 해당되는 jsp가 없음 -->
+  <!-- 
+  [주요 오류 코드 종류]
+  200 : 요청이 정상적으로 처리됨
+  307 : 임시로 페이지가 리다이렉트 됨
+  400 : 클라이언트의 요청이 잘못된 구문으로 구성됨
+  401 : 접근이 허용되지 않음
+  404 : 지정된 URL을 처리하기 위한 자원이 존재하지 않음
+  405 : 요청된 메소드가 허용되지 않음
+  500 : 서버 내부 오류(JSP에서 예외 발생)
+  503 : 서버 과부하나 보수 중인 경우. 서버가 일시적으로 서비시를 제공할 수 없음
+   -->
+   <!-- 오류 코드 설정 
+     오류 코드 : 웹 서버가 제공하는 기본 오류 페이지에 나타나는 404, 500과 같이
+     사용자의 요청이 올바르지 않을 때 출력되는 코드. 응답 상태 코드.
+     
+     JSP페이지에서 발생하는 오류가 web.xml 파일에 설정된 오류 코드와 일치하는
+     경우 오류 코드와 오류 페이지를 보여줌
+     -->
+     <error-page>
+     	<error-code>404</error-code>
+     	<!-- 오류 페이지 설정 -->
+     	<location>/exceptionNoPage.jsp</location>
+     </error-page>
+     
+     <error-page>
+     	<error-code>403</error-code>
+     	<!-- 오류 페이지 설정 (접근권한 없음) -->
+     	<location>/error/error403.jsp</location>
+     </error-page>
+     
+     <error-page>
+     	<error-code>500</error-code>
+     	<!-- 오류 페이지 설정 (개발자의 오류, 잘못된 코드를 실행) 
+     	
+     	우선순위
+     	jsp페이지의 page디렉티브의 errorPage > web.xml의 error-code
+     	-->
+     	<location>/error/error500.jsp</location>
+     </error-page>
+     
+     <!-- 
+     	[2] 예외 유형에 따른 오류 페이지 호출 방법은 JSP 페이지가 발생시키는 오류가 web.xml 파일에
+   		설정된 예외 유형과 일치하는 경우 예외 유형과 오류 페이지를 보여줌
+   		
+   		우선순위
+     	jsp페이지의 page디렉티브의 errorPage > web.xml의 error-code
+      -->
+      <error-page>
+      <!-- 자바 예외 유형의 정규화된 클래스 이름을 설정 -->
+      	<exception-type>java.lang.NullPointerException</exception-type>
+      	<location>/error/errorNullPointer.jsp</location>
+      </error-page>
+      
+      <!-- Filter 인터페이스의 구현 클래스 -->
+      <filter>
+      	<filter-name>Filter01</filter-name>
+      	<filter-class>filter.AuthenFilter</filter-class>
+      </filter>
+      <filter-mapping>
+      	<filter-name>Filter01</filter-name>
+      	<url-pattern>/ch12/filter01_process.jsp</url-pattern>
+      </filter-mapping>
+      
+      <filter>
+      	<filter-name>Filter02</filter-name>
+      	<filter-class>filter.InitParamFilter</filter-class>
+      	<!-- 
+      	매개변수=매개변수 값
+      	InitParamFilter 클래스의 init 메서드로 던져짐
+      	param1=admin&param2=java -->
+      	<init-param>
+      		<param-name>param1</param-name>
+      		<param-value>admin</param-value>
+      	</init-param>
+      	<init-param>
+      		<param-name>param2</param-name>
+      		<param-value>java</param-value>
+      	</init-param>
+      </filter>
+      <filter-mapping>
+      	<filter-name>Filter02</filter-name>
+      	<url-pattern>/ch12/filter02_process.jsp</url-pattern>
+      </filter-mapping>
+      
+      <filter>
+      	<filter-name>Filter03</filter-name>
+      	<filter-class>filter.LogFileFilter</filter-class>
+      	<!-- 
+      	매개변수=매개변수 값
+      	InitParamFilter 클래스의 init 메서드로 던져짐
+      	param1=admin&param2=java -->
+      	<init-param>
+      		<param-name>filename</param-name>
+      		<param-value>c:\\logs\\monitor.log</param-value>
+      	</init-param>
+      </filter>
+      <filter-mapping>
+      	<filter-name>Filter03</filter-name>
+      	<url-pattern>/*</url-pattern>
+      </filter-mapping>
+      <!-- 04. 콘솔에 CLINET IP주소, 요청URI, 요청시각/종료/소요시간 -->
+      <filter>
+      	<filter-name>LogFilter</filter-name>
+      	<filter-class>filter.LogFilter</filter-class>
+      </filter>
+      <filter-mapping>
+      	<filter-name>LogFilter</filter-name>
+      	<url-pattern>/*</url-pattern><!-- 모든 요청 /* -->
+      </filter-mapping>
+</web-app>
