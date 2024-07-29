@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="book">
+	<insert id="createPost" parameterType="bookVo">
+		<selectKey resultType="int" order="BEFORE" keyProperty="bookId">
+			select nvl(max(book_id),0)+1 from book
+		</selectKey>
+		
+		insert into book(BOOK_ID, TITLE, CATEGORY, PRICE, INSERT_DATE)
+		values(#{bookId}, #{title}, #{category}, #{price}, SYSDATE)
+	</insert>
+
+	<!-- 도서 목록 
+	return this.sqlSessionTemplate.selectList("book.list",map);
+	
+	//1) map{"category":"소설","gubun":"","keyword":"127"}
+	//2) map{"category":"","gubun":"title","keyword":"127"}
+	//3) map{"category":"소설","gubun":"price","keyword":"127"}
+	-->
+	<select id="list" parameterType="hashMap" resultType="bookVO">
+		with t as(
+			SELECT ROW_NUMBER() OVER(ORDER BY BOOK_ID DESC) RNUM
+		         , BOOK_ID, TITLE, CATEGORY, PRICE, INSERT_DATE
+		    FROM   BOOK
+		    WHERE 1=1
+			        <if test="category != null and category != ''">
+            AND CATEGORY = #{category}
+        </if>
+        <if test="gubun != null and gubun != ''">
+            <choose>
+                <when test="gubun == 'title'">
+                    AND TITLE LIKE '%' || #{keyword} || '%'
+                </when>
+                <when test="gubun == 'price'">
+                    AND TO_CHAR(PRICE) = #{keyword}
+                </when>
+            </choose>
+        </if>
+		)
+		select t.*
+		from t
+		WHERE  T.RNUM BETWEEN (#{currentPage}*#{size}) - (#{size}-1) AND (#{currentPage}*#{size})	
+	</select>
+	
+	<select id="getTotal" parameterType="hashMap" resultType="int">
+		select count(*)
+		from book
+		WHERE 1 = 1
+        <if test="category != null and category != ''">
+            AND CATEGORY = #{category}
+        </if>
+        <if test="gubun != null and gubun != ''">
+            <choose>
+                <when test="gubun == 'title'">
+                    AND TITLE LIKE '%' || #{keyword} || '%'
+                </when>
+                <when test="gubun == 'price'">
+                    AND TO_CHAR(PRICE) = #{keyword}
+                </when>
+            </choose>
+        </if>
+	</select>
+	
+	<!-- 카테고리 목록 -->
+	<select id="getCategories" resultType="hashMap">
+		SELECT DISTINCT CATEGORY
+		FROM   BOOK
+		ORDER BY 1
+	</select>
+	
+	<select id="detail" resultType="bookVo" parameterType="bookVo">
+		select *
+		from book
+		where book_id = #{bookId}
+	</select>
+	
+	<update id="update" parameterType="bookVo">
+		update book
+		set title=#{title},
+		category=#{category},
+		price=#{price}
+		where book_id = #{bookId}
+	</update>
+	
+	<delete id="delete" parameterType="bookVo">
+		delete book
+		where book_id = #{bookId}
+	</delete>
+</mapper>

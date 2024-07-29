@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lprod">
+	<insert id="createPost" parameterType="LprodVo">
+		<selectKey resultType="String" order="BEFORE" keyProperty="lprodGu">
+			select #{gubun}|| lpad((to_number(nvl(max(substr(lprod_gu,3)),0))+1),2,0)
+			from lprod
+			where substr(lprod_gu,1,2)=#{gubun}
+		</selectKey>
+		
+		insert into lprod
+		values((select nvl(max(lprod_id),0)+1  from lprod), #{lprodGu}, #{lprodNm})
+	</insert>
+	
+	<sql id="idchk">
+	    <if test="gubun != null or gubun != ''"> 
+	        <choose>
+	            <when test="gubun == 'lprodGu'">
+	                where lprod_gu like '%' || #{keyword} || '%'
+	            </when>
+	            <when test="gubun == 'lprodNm'"> 
+	                where lprod_nm like '%' || #{keyword} || '%'
+	            </when>
+	        </choose>
+	    </if>
+	    <if test="gubun == null or gubun == ''">
+	    	 where lprod_nm like '%' || #{keyword} || '%'
+	    	 or lprod_gu like '%' || #{keyword} || '%'
+		</if>	    
+	</sql>
+	
+	<!-- 전체 글 수 -->
+	<select id="getTotal" resultType="int" parameterType="hashMap">
+		SELECT COUNT(*) FROM LPROD
+		<include refid="idchk"/>
+	</select>
+	
+	<select id="list" parameterType="hashMap" resultType="lprodVo">
+		with t as(
+			select ROW_NUMBER() OVER(ORDER BY lprod_gu DESC) RNUM, lprod_gu, lprod_id, lprod_nm ,count(prod_lgu) cnt
+			from lprod
+			left outer join prod on prod_lgu = lprod_gu
+			<include refid="idchk"/>
+			group by  lprod_gu, lprod_id, lprod_nm
+		)
+		select t.*
+		from t
+		WHERE  T.RNUM BETWEEN (#{currentPage}*#{size}) - (#{size}-1) AND (#{currentPage}*#{size})
+	</select>
+	
+	<select id="detail" parameterType="lprodVo" resultType="lprodVo">
+		select *
+		from lprod
+		where lprod_id=#{lprodId}
+	</select>
+	
+	<update id="update" parameterType="lprodVo">
+		update lprod
+		set lprod_gu = #{lprodGu},
+		lprod_nm = #{lprodNm}
+		where lprod_id = #{lprodId}
+	</update>
+	
+	<delete id="delete" parameterType="lprodVo">
+		delete lprod
+		where lprod_id = #{lprodId}
+	</delete>
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="buyprod">
+
+	<select id="list" resultType="buyprodVo" parameterType="hashMap">
+	<![CDATA[
+	with t as(
+		SELECT 
+		    ROW_NUMBER() OVER (ORDER BY TO_NUMBER(REPLACE(B.BUY_DATE, 12, 0)) ASC) AS RNUM,
+		    B.BUY_DATE AS buy_date_month,
+		    NVL(A.BUY_QTY, 0) AS BUY_QTY,
+		    NVL(A.AMT, 0) AS AMT
+		FROM
+		    (
+		        SELECT 
+		            EXTRACT(MONTH FROM BUY_DATE) AS BUY_DATE,
+		            SUM(BUY_QTY) AS BUY_QTY,
+		            SUM(BUY_QTY * BUY_COST) AS AMT
+		        FROM 
+		            BUYPROD
+		        WHERE 
+		            EXTRACT(YEAR FROM BUY_DATE) = #{year}
+		        GROUP BY 
+		            EXTRACT(MONTH FROM BUY_DATE)
+		        HAVING 
+		            SUM(BUY_QTY * BUY_COST) >= #{amt}
+		    ) A 
+		RIGHT OUTER JOIN
+		    (
+		        SELECT LEVEL AS BUY_DATE 
+		        FROM DUAL
+		        CONNECT BY LEVEL <= 12
+		    ) B 
+		ON 
+		    A.BUY_DATE = B.BUY_DATE
+	)
+	select t.*
+	from t
+	WHERE  T.RNUM BETWEEN (#{currentPage}*#{size}) - (#{size}-1) AND (#{currentPage}*#{size})	
+	]]>
+	</select>
+	
+	<select id="getTotal" parameterType="hashMap" resultType="int">
+		<![CDATA[
+		SELECT count(*)
+	FROM
+	(
+	    SELECT EXTRACT(MONTH FROM BUY_DATE) BUY_DATE
+	         , SUM(BUY_QTY) BUY_QTY
+	         , SUM(BUY_QTY * BUY_COST) AMT
+	    FROM   BUYPROD
+	    WHERE  EXTRACT(YEAR FROM BUY_DATE) = TO_CHAR(#{year})
+	    GROUP BY EXTRACT(MONTH FROM BUY_DATE)
+	    HAVING SUM(BUY_QTY * BUY_COST) >= #{amt}
+	) A RIGHT OUTER JOIN
+	(
+	    SELECT LEVEL BUY_DATE FROM DUAL
+	    CONNECT BY LEVEL <= 12
+	) B
+	ON(A.BUY_DATE = B.BUY_DATE)
+		]]>
+	</select>
+</mapper>
