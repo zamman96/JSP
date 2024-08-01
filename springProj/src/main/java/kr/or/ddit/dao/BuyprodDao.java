@@ -21,4 +21,16 @@ public class BuyprodDao {
 	public int getTotal(Map<String, Object> map) {
 		return this.sst.selectOne("buyprod.getTotal", map);
 	}
+
+	public List<BuyprodVO> detail(Map<String, Object> map) {
+		return this.sst.selectList("buyprod.detail", map);
+	}
+
+	public int getDetailTotal(Map<String, Object> map) {
+		return this.sst.selectOne("buyprod.getDetailTotal", map);
+	}
+
+	public BuyprodVO detailAjax(BuyprodVO vo) {
+		return this.sst.selectOne("buyprod.detailAjax", vo);
+	}
 }

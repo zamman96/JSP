@@ -68,13 +68,13 @@
 				<div class="container-fluid">
 					<div class="row mb-2">
 						<div class="col-sm-6">
-							<h1 class="m-0">Dashboard</h1>
+							<h1 class="m-0">${title}</h1>
 						</div>
 						<!-- /.col -->
 						<div class="col-sm-6">
 							<ol class="breadcrumb float-sm-right">
 								<li class="breadcrumb-item"><a href="#">Home</a></li>
-								<li class="breadcrumb-item active">Dashboard v1</li>
+								<li class="breadcrumb-item active">${title}</li>
 							</ol>
 						</div>
 						<!-- /.col -->
@@ -118,12 +118,12 @@
 		src="/resources/adminlte3/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 	<!-- ChartJS -->
 	<script src="/resources/adminlte3/plugins/chart.js/Chart.min.js"></script>
-	<!-- Sparkline -->
-	<script src="/resources/adminlte3/plugins/sparklines/sparkline.js"></script>
-	<!-- JQVMap -->
-	<script src="/resources/adminlte3/plugins/jqvmap/jquery.vmap.min.js"></script>
-	<script
-		src="/resources/adminlte3/plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
+<!-- 	<!-- Sparkline --> -->
+<!-- 	<script src="/resources/adminlte3/plugins/sparklines/sparkline.js"></script> -->
+<!-- 	<!-- JQVMap --> -->
+<!-- 	<script src="/resources/adminlte3/plugins/jqvmap/jquery.vmap.min.js"></script> -->
+<!-- 	<script -->
+<!-- 		src="/resources/adminlte3/plugins/jqvmap/maps/jquery.vmap.usa.js"></script> -->
 	<!-- jQuery Knob Chart -->
 	<script
 		src="/resources/adminlte3/plugins/jquery-knob/jquery.knob.min.js"></script>
@@ -145,7 +145,7 @@
 	<!-- AdminLTE for demo purposes -->
 	<script src="/resources/adminlte3/dist/js/demo.js"></script>
 	<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-	<script src="/resources/adminlte3/dist/js/pages/dashboard.js"></script>
+<!-- 	<script src="/resources/adminlte3/dist/js/pages/dashboard.js"></script> -->
 </body>
 </html>
 

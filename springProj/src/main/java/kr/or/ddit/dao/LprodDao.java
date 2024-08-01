@@ -7,7 +7,9 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import kr.or.ddit.vo.BuyerVO;
 import kr.or.ddit.vo.LprodVO;
+import kr.or.ddit.vo.ProdVO;
 @Repository
 public class LprodDao {
 	
@@ -36,6 +38,10 @@ public class LprodDao {
 
 	public int getTotal(Map<String, Object> map) {
 		return this.sst.selectOne("lprod.getTotal", map);
+	}
+
+	public List<BuyerVO> getProdList(ProdVO vo) {
+		return this.sst.selectList("lprod.getProdList", vo);
 	}
 
 }

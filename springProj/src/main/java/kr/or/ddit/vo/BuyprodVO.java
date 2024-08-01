@@ -8,9 +8,11 @@ import lombok.Data;
 public class BuyprodVO {
 	private int rnum;
 	private Date buyDate;
+	private String buyDateStr;
 	private String buyProd;
 	private int buyQty;
 	private int buyCost;
+	private String prodName;
 
 	private int year;
 	private int buyDateMonth;

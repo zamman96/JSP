@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import kr.or.ddit.dao.LprodDao;
 import kr.or.ddit.service.LprodService;
+import kr.or.ddit.vo.BuyerVO;
 import kr.or.ddit.vo.LprodVO;
+import kr.or.ddit.vo.ProdVO;
 
 @Service
 public class LprodServiceImpl implements LprodService {
@@ -44,6 +46,11 @@ public class LprodServiceImpl implements LprodService {
 	@Override
 	public int getTotal(Map<String, Object> map) {
 		return this.dao.getTotal(map);
+	}
+
+	@Override
+	public List<BuyerVO> getProdList(ProdVO vo) {
+		return this.dao.getProdList(vo);
 	}
 
 }

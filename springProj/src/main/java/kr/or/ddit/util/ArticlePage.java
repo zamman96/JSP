@@ -26,6 +26,8 @@ public class ArticlePage<T> {
 	//페이징 처리
 	private String pagingArea = "";
 	
+	private int year = 0;
+	
 	//생성자(Constructor) : 페이징 정보를 생성
 	//					753				1				10			select결과10행
 	public ArticlePage(int total, int currentPage, int size, List<T> content, Map<String,Object> keyword) {
@@ -34,6 +36,9 @@ public class ArticlePage<T> {
 		this.currentPage = currentPage;//1
 		this.content = content;
 		this.keyword = keyword;
+		if(keyword.containsKey("year")) {
+			this.year = (int)keyword.get("year");
+		}
 		
 		//전체글 수가 0이면?
 		if(total==0) {

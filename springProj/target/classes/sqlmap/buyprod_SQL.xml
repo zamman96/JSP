@@ -60,4 +60,38 @@
 	ON(A.BUY_DATE = B.BUY_DATE)
 		]]>
 	</select>
+	
+	<select id="detail" parameterType="hashMap" resultType="buyprodVo">
+	<![CDATA[
+	with t as(
+		select ROW_NUMBER() OVER (ORDER BY BUY_DATE ASC) AS RNUM,
+			buy_date, buy_prod, prod_name, buy_qty, buy_cost
+		from buyprod a, prod b
+		where extract(year from buy_date) = #{year}
+		and extract(month from buy_date) = #{month}
+		and a.buy_prod=b.prod_id
+		and buy_qty*buy_cost >= #{amt}
+	)
+	select t.*
+	from t
+	WHERE  T.RNUM BETWEEN (#{currentPage}*#{size}) - (#{size}-1) AND (#{currentPage}*#{size})	
+	]]>
+	</select>
+	
+	<select id="getDetailTotal" parameterType="hashMap" resultType="int">
+		select count(*)
+		from buyprod a, prod b
+		where extract(year from buy_date) = #{year}
+		and extract(month from buy_date) = #{month}
+		and buy_qty*buy_cost >= #{amt}
+		and a.buy_prod=b.prod_id
+	</select>
+	
+	<select id="detailAjax" parameterType="buyprodVo" resultType="buyprodVo">
+		select *
+		from buyprod a, prod b
+		where a.buy_prod = #{buyProd}
+		and to_char(a.buy_date, 'yyyy-mm-dd') = to_char(#{buyDate},'yyyy-mm-dd')
+		and a.buy_prod=b.prod_id
+	</select>
 </mapper>

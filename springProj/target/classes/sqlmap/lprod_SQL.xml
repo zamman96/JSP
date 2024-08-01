@@ -65,4 +65,69 @@
 		delete lprod
 		where lprod_id = #{lprodId}
 	</delete>
+	<!-- ResultMap이란?
+   복잡한 결과 매핑(조인 등)을 수행할 때 간편하게 수행이 가능하도록 만들어주기 위해 사용하는 태그
+   
+   type : java의 객체자료형(DTO)의 이름을 작성
+   id : 본인이 사용할 직관적인 이름 부여
+   id 태그의 column : 테이블 간의 참조키로 활용되는 컬럼명(기본키 컬럼)
+   id 태그의 property : 컬럼에 해당하는 DTO의 멤버변수(프로퍼티)명
+   result 태그의 column : 일반 컬럼명
+   result 태그의 property : 컬럼에 해당하는 DTO의 멤버변수명
+    -->
+    <resultMap type="buyerVo" id="buyerMap">
+		<result property="buyerId" column="BUYER_ID"/>
+		<result property="buyerName" column="BUYER_NAME"/>
+		<result property="buyerLgu" column="BUYER_LGU"/>
+		<result property="buyerBank" column="BUYER_BANK"/>
+		<result property="buyerBankno" column="BUYER_BANKNO"/>
+		<result property="buyerBankname" column="BUYER_BANKNAME"/>
+		<result property="buyerZip" column="BUYER_ZIP"/>
+		<result property="buyerAdd1" column="BUYER_ADD1"/>
+		<result property="buyerAdd2" column="BUYER_ADD2"/>
+		<result property="buyerComtel" column="BUYER_COMTEL"/>
+		<result property="buyerFax" column="BUYER_FAX"/>
+		<result property="buyerMail" column="BUYER_MAIL"/>
+		<result property="buyerCharger" column="BUYER_CHARGER"/>
+		<result property="buyerTelext" column="BUYER_TELEXT"/>
+		<collection property="prodVoList" resultMap="prodMap"></collection>
+    </resultMap>
+    
+    <resultMap type="prodVo" id="prodMap">
+	    <result property="prodId" column="PROD_ID"/>
+		<result property="prodName" column="PROD_NAME"/>
+		<result property="prodLgu" column="PROD_LGU"/>
+		<result property="prodBuyer" column="PROD_BUYER"/>
+		<result property="prodCost" column="PROD_COST"/>
+		<result property="prodPrice" column="PROD_PRICE"/>
+		<result property="prodSale" column="PROD_SALE"/>
+		<result property="prodOutline" column="PROD_OUTLINE"/>
+		<result property="prodDetail" column="PROD_DETAIL"/>
+		<result property="prodImg" column="PROD_IMG"/>
+		<result property="prodTotalstock" column="PROD_TOTALSTOCK"/>
+		<result property="prodInsdate" column="PROD_INSDATE"/>
+		<result property="prodProperstock" column="PROD_PROPERSTOCK"/>
+		<result property="prodSize" column="PROD_SIZE"/>
+		<result property="prodColor" column="PROD_COLOR"/>
+		<result property="prodDelivery" column="PROD_DELIVERY"/>
+		<result property="prodUnit" column="PROD_UNIT"/>
+		<result property="prodQtyin" column="PROD_QTYIN"/>
+		<result property="prodQtysale" column="PROD_QTYSALE"/>
+		<result property="prodMileage" column="PROD_MILEAGE"/>
+    </resultMap>
+    
+	<select id="getProdList" parameterType="prodVo" resultMap="buyerMap">
+		SELECT A.PROD_ID, A.PROD_NAME, A.PROD_LGU, A.PROD_BUYER, A.PROD_COST
+     , A.PROD_PRICE, A.PROD_SALE, A.PROD_OUTLINE, A.PROD_DETAIL, A.PROD_IMG
+     , A.PROD_TOTALSTOCK, A.PROD_INSDATE, A.PROD_PROPERSTOCK, A.PROD_SIZE
+     , A.PROD_COLOR, A.PROD_DELIVERY, A.PROD_UNIT, A.PROD_QTYIN, A.PROD_QTYSALE
+     , A.PROD_MILEAGE
+     , B.BUYER_ID, B.BUYER_NAME, B.BUYER_LGU, B.BUYER_BANK, B.BUYER_BANKNO
+     , B.BUYER_BANKNAME, B.BUYER_ZIP, B.BUYER_ADD1, B.BUYER_ADD2
+     , B.BUYER_COMTEL, B.BUYER_FAX, B.BUYER_MAIL, B.BUYER_CHARGER
+     , B.BUYER_TELEXT
+	FROM   BUYER B, PROD A
+	WHERE  B.BUYER_ID = A.PROD_BUYER
+		and  a.PROD_LGU = #{prodLgu}
+	</select>
 </mapper>

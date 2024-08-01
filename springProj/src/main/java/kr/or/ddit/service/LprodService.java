@@ -3,7 +3,9 @@ package kr.or.ddit.service;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.ddit.vo.BuyerVO;
 import kr.or.ddit.vo.LprodVO;
+import kr.or.ddit.vo.ProdVO;
 
 public interface LprodService {
 
@@ -18,5 +20,7 @@ public interface LprodService {
 	public int delete(LprodVO vo);
 
 	public int getTotal(Map<String,Object> map);
+
+	public List<BuyerVO> getProdList(ProdVO vo);
 
 }

@@ -26,4 +26,19 @@ public class BuyprodServiceImpl implements BuyprodService{
 		return this.dao.getTotal(map);
 	}
 
+	@Override
+	public int getDetailTotal(Map<String, Object> map) {
+		return this.dao.getDetailTotal(map);
+	}
+
+	@Override
+	public List<BuyprodVO> detail(Map<String, Object> map) {
+		return this.dao.detail(map);
+	}
+
+	@Override
+	public BuyprodVO detailAjax(BuyprodVO vo) {
+		return this.dao.detailAjax(vo) ;
+	}
+
 }

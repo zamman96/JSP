@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="prod">
+
+	<resultMap type="buyerVo" id="buyerMap">
+		<result property="buyerId" column="BUYER_ID"/>
+		<result property="buyerName" column="BUYER_NAME"/>
+		<result property="buyerLgu" column="BUYER_LGU"/>
+		<result property="buyerBank" column="BUYER_BANK"/>
+		<result property="buyerBankno" column="BUYER_BANKNO"/>
+		<result property="buyerBankname" column="BUYER_BANKNAME"/>
+		<result property="buyerZip" column="BUYER_ZIP"/>
+		<result property="buyerAdd1" column="BUYER_ADD1"/>
+		<result property="buyerAdd2" column="BUYER_ADD2"/>
+		<result property="buyerComtel" column="BUYER_COMTEL"/>
+		<result property="buyerFax" column="BUYER_FAX"/>
+		<result property="buyerMail" column="BUYER_MAIL"/>
+		<result property="buyerCharger" column="BUYER_CHARGER"/>
+		<result property="buyerTelext" column="BUYER_TELEXT"/>
+		<collection property="prodVoList" resultMap="prodMap"></collection>
+    </resultMap>
+	
+	<resultMap type="prodVo" id="prodMap">
+		<result property="prodId" column="PROD_ID"/>
+		<result property="prodName" column="PROD_NAME"/>
+		<result property="prodLgu" column="PROD_LGU"/>
+		<result property="prodBuyer" column="PROD_BUYER"/>
+		<result property="prodCost" column="PROD_COST"/>
+		<result property="prodPrice" column="PROD_PRICE"/>
+		<result property="prodSale" column="PROD_SALE"/>
+		<result property="prodOutline" column="PROD_OUTLINE"/>
+		<result property="prodDetail" column="PROD_DETAIL"/>
+		<result property="prodImg" column="PROD_IMG"/>
+		<result property="prodTotalstock" column="PROD_TOTALSTOCK"/>
+		<result property="prodInsdate" column="PROD_INSDATE"/>
+		<result property="prodProperstock" column="PROD_PROPERSTOCK"/>
+		<result property="prodSize" column="PROD_SIZE"/>
+		<result property="prodColor" column="PROD_COLOR"/>
+		<result property="prodDelivery" column="PROD_DELIVERY"/>
+		<result property="prodUnit" column="PROD_UNIT"/>
+		<result property="prodQtyin" column="PROD_QTYIN"/>
+		<result property="prodQtysale" column="PROD_QTYSALE"/>
+		<result property="prodMileage" column="PROD_MILEAGE"/>
+		<collection property="cartVoList" resultMap="cartMap"></collection>
+	</resultMap>
+	
+	<resultMap type="cartVo" id="cartMap">
+		<result property="cartProd" column="CART_PROD"/>
+		<result property="cartQty" column="CART_QTY"/>
+		<result property="cartMember" column="CART_MEMBER"/>
+		<result property="cartNo" column="CART_NO"/>
+		<collection property="memVo" resultMap="memMap"></collection>
+	</resultMap>
+	
+	<resultMap type="memVo" id="memMap">
+		<result property="memId" column="MEM_ID"/>
+		<result property="memPass" column="MEM_PASS"/>
+		<result property="memName" column="MEM_NAME"/>
+		<result property="memRegno1" column="MEM_REGNO1"/>
+		<result property="memRegno2" column="MEM_REGNO2"/>
+		<result property="memBir" column="MEM_BIR"/>
+		<result property="memZip" column="MEM_ZIP"/>
+		<result property="memAdd1" column="MEM_ADD1"/>
+		<result property="memAdd2" column="MEM_ADD2"/>
+		<result property="memHometel" column="MEM_HOMETEL"/>
+		<result property="memComtel" column="MEM_COMTEL"/>
+		<result property="memHp" column="MEM_HP"/>
+		<result property="memMail" column="MEM_MAIL"/>
+		<result property="memJob" column="MEM_JOB"/>
+		<result property="memLike" column="MEM_LIKE"/>
+		<result property="memMemorial" column="MEM_MEMORIAL"/>
+		<result property="memMemorialday" column="MEM_MEMORIALDAY"/>
+		<result property="memMileage" column="MEM_MILEAGE"/>
+		<result property="memDelete" column="MEM_DELETE"/>
+	</resultMap>
+	
+	<select id="prodList"  resultMap="buyerMap" parameterType="hashMap">
+	with t as(
+		SELECT row_number() over(order by b.buyer_id) rnum
+		, A.PROD_ID, A.PROD_NAME, A.PROD_BUYER, A.PROD_SALE, A.PROD_OUTLINE, A.PROD_DETAIL
+     , B.BUYER_ID, B.BUYER_NAME
+	FROM   BUYER B, PROD A
+	WHERE  B.BUYER_ID = A.PROD_BUYER
+	)
+	select t.*
+	from t
+	WHERE  T.RNUM BETWEEN (#{currentPage}*#{size}) - (#{size}-1) AND (#{currentPage}*#{size})
+	</select>
+	
+	<select id="prodListTotal" resultType="int">
+		SELECT count(*)
+		FROM   BUYER B, PROD A
+		WHERE  B.BUYER_ID = A.PROD_BUYER
+	</select>
+	
+	
+	<select id="cartlist" resultMap="prodMap" parameterType="prodVo">
+		select 
+	    c.cart_no, c.cart_prod, p.prod_name, c.cart_qty, p.prod_sale, c.cart_member, m.mem_name
+		from prod p 
+		inner join cart c on c.cart_prod=p.prod_id
+		inner join member m on c.cart_member = m.mem_id
+		where c.cart_prod = #{prodId}
+	</select>
+
+	<select id="memDetail" parameterType="memVo" resultType="memVo">
+		select *
+		from member
+		where mem_id=#{memId}
+	</select>
+
+</mapper>

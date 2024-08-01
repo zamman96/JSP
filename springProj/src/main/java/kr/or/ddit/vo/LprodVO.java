@@ -10,4 +10,5 @@ public class LprodVO {
 	private String lprodGu;
 	private String lprodNm;
 	private int cnt;
+	private String gubun;
 }

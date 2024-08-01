@@ -17,5 +17,9 @@
        <typeAlias type="kr.or.ddit.vo.LprodVO" alias="LprodVo" /> 
        <typeAlias type="kr.or.ddit.vo.JdbcBoardVO" alias="boardVo" /> 
        <typeAlias type="kr.or.ddit.vo.BuyprodVO" alias="buyprodVo" /> 
+       <typeAlias type="kr.or.ddit.vo.ProdVO" alias="prodVo" /> 
+       <typeAlias type="kr.or.ddit.vo.BuyerVO" alias="buyerVo" /> 
+       <typeAlias type="kr.or.ddit.vo.CartVO" alias="cartVo" /> 
+       <typeAlias type="kr.or.ddit.vo.MemberVO" alias="memVo" /> 
    </typeAliases>
 </configuration>

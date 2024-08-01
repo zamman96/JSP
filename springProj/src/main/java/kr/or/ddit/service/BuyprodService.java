@@ -11,4 +11,10 @@ public interface BuyprodService {
 
 	public int getTotal(Map<String, Object> map);
 
+	public int getDetailTotal(Map<String, Object> map);
+
+	public List<BuyprodVO> detail(Map<String, Object> map);
+
+	public BuyprodVO detailAjax(BuyprodVO vo);
+
 }
