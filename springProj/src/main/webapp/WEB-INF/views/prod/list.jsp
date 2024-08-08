@@ -4,8 +4,11 @@
 <script type="text/javascript" src="/resources/js/jquery.min.js"></script>
 <div class="row">
 <div class="col-md-6 card" style="width: 45%">
-	<div class="card-header">
-		<h3>상품 테이블</h3>
+	<div class="card-header row" style="justify-content: space-between;">
+		<div>
+			<h3>상품 목록</h3>
+		</div>
+		<button type="button" class="btn btn-success" onclick="javascript:location.href='/prod/regist'">상품 등록</button>
 	</div>
 	<div class="card-body row" style="justify-content: space-between;">
 				<table class="table table-bordered">
@@ -30,7 +33,7 @@
 					<c:forEach var="prod" items="${buyer.prodVoList}">
 						<tr class="click" data-prod-id="${prod.prodId}">
 							<td>${rowNumber + 1}</td>
-							<td>${prod.prodName}</td>
+							<td><a href="/prod/detail?prodId=${prod.prodId}">${prod.prodName}</a></td>
 							<td><fmt:formatNumber value="${prod.prodSale}" pattern="#,###" type="number"/></td>
 							<td>${buyer.buyerName}</td>
 						</tr>
@@ -64,6 +67,9 @@
 				</tr>
 			</tbody>
 		</table>
+		<div class="right">
+			<input type="button" class="btn btn-primary" value="장바구니 관리" id="cart" onclick="javascript:location.href='/prod/cart'">
+		</div>
 	</div>
 </div>
 </div>
@@ -152,6 +158,11 @@ $(function(){
 			type : "post",
 			success : function(res){
 				let str = "";
+				if(typeof res[0] == "undefined"){
+					str="<tr><td colspan='5'>장바구니 담은 회원이 없습니다<td></tr>";
+					$('#cartlist').html(str);
+					return false;
+				}
 				console.log(res[0]);
 				let indx = 1;
 				$.each(res[0].cartVoList, function(i, vo){
@@ -161,7 +172,6 @@ $(function(){
 					str += "<td>"+ vo.cartMember +"</td>";
 					str += "<td>"+ vo.memVo.memName +"</td></tr>";
 				})
-				
 				$('#cartlist').html(str);
 			}
 		})

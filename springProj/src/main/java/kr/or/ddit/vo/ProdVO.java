@@ -3,6 +3,8 @@ package kr.or.ddit.vo;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 
 @Data
@@ -29,6 +31,10 @@ public class ProdVO {
 	private int prodQtyin;
 	private int prodQtysale;
 	private int prodMileage;
+	private long fileGroupNo;
+	
+	private MultipartFile[] uploadFile;
 	
 	private List<CartVO> cartVoList;
+	private FileGroupVO fgvo;
 }

@@ -21,5 +21,11 @@
        <typeAlias type="kr.or.ddit.vo.BuyerVO" alias="buyerVo" /> 
        <typeAlias type="kr.or.ddit.vo.CartVO" alias="cartVo" /> 
        <typeAlias type="kr.or.ddit.vo.MemberVO" alias="memVo" /> 
+       <typeAlias type="kr.or.ddit.vo.TblUserVO" alias="tblUserVo" /> 
+       <typeAlias type="kr.or.ddit.vo.CardVO" alias="cardVo" /> 
+       <typeAlias type="kr.or.ddit.vo.TblHobbyVO" alias="tblHobbyVo" /> 
+       <typeAlias type="kr.or.ddit.vo.CarsVO" alias="carsVo" /> 
+       <typeAlias type="kr.or.ddit.vo.FileDetailVO" alias="fileDetailVo" /> 
+       <typeAlias type="kr.or.ddit.vo.FileGroupVO" alias="fileGroupVo" /> 
    </typeAliases>
 </configuration>

@@ -2,6 +2,8 @@ package kr.or.ddit.vo;
 
 import java.util.Date;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 
 @Data
@@ -26,4 +28,8 @@ public class MemberVO {
 	private Date memMemorialday;
 	private int memMileage;
 	private String memDelete;
+	private MultipartFile fileImage;
+	private long fileGroupNo;
+	
+	private FileGroupVO fgvo;
 }

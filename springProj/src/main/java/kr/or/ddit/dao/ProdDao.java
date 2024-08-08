@@ -7,8 +7,12 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import kr.or.ddit.vo.CardVO;
+import kr.or.ddit.vo.CarsVO;
 import kr.or.ddit.vo.MemberVO;
 import kr.or.ddit.vo.ProdVO;
+import kr.or.ddit.vo.TblHobbyVO;
+import kr.or.ddit.vo.TblUserVO;
 
 @Repository
 public class ProdDao {
@@ -30,6 +34,22 @@ public class ProdDao {
 
 	public MemberVO memDetail(MemberVO vo) {
 		return this.sst.selectOne("prod.memDetail",vo);
+	}
+
+	public int insertTblUser(TblUserVO vo) {
+		return this.sst.insert("prod.insertTblUser", vo);
+	}
+
+	public int insertCard(CardVO v) {
+		return this.sst.insert("prod.insertCard", v);
+	}
+
+	public int insertHobby(TblHobbyVO hvo) {
+		return this.sst.insert("prod.insertHobby", hvo);
+	}
+	
+	public int insertCars(List<CarsVO> carsVoList) {
+		return this.sst.insert("prod.insertCars", carsVoList);
 	}
 
 }

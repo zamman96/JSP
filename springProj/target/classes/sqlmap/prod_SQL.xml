@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="prod">
+<mapper namespace="kr.or.ddit.mapper.ProdMapper">
 
 	<resultMap type="buyerVo" id="buyerMap">
 		<result property="buyerId" column="BUYER_ID"/>
@@ -21,27 +21,50 @@
     </resultMap>
 	
 	<resultMap type="prodVo" id="prodMap">
-		<result property="prodId" column="PROD_ID"/>
-		<result property="prodName" column="PROD_NAME"/>
-		<result property="prodLgu" column="PROD_LGU"/>
-		<result property="prodBuyer" column="PROD_BUYER"/>
-		<result property="prodCost" column="PROD_COST"/>
-		<result property="prodPrice" column="PROD_PRICE"/>
-		<result property="prodSale" column="PROD_SALE"/>
-		<result property="prodOutline" column="PROD_OUTLINE"/>
-		<result property="prodDetail" column="PROD_DETAIL"/>
-		<result property="prodImg" column="PROD_IMG"/>
-		<result property="prodTotalstock" column="PROD_TOTALSTOCK"/>
-		<result property="prodInsdate" column="PROD_INSDATE"/>
-		<result property="prodProperstock" column="PROD_PROPERSTOCK"/>
-		<result property="prodSize" column="PROD_SIZE"/>
-		<result property="prodColor" column="PROD_COLOR"/>
-		<result property="prodDelivery" column="PROD_DELIVERY"/>
-		<result property="prodUnit" column="PROD_UNIT"/>
-		<result property="prodQtyin" column="PROD_QTYIN"/>
-		<result property="prodQtysale" column="PROD_QTYSALE"/>
-		<result property="prodMileage" column="PROD_MILEAGE"/>
-		<collection property="cartVoList" resultMap="cartMap"></collection>
+	    <result property="rnum" column="RNUM"/>
+	    <result property="prodId" column="PROD_ID"/>
+	    <result property="prodName" column="PROD_NAME"/>
+	    <result property="prodLgu" column="PROD_LGU"/>
+	    <result property="prodBuyer" column="PROD_BUYER"/>
+	    <result property="prodCost" column="PROD_COST"/>
+	    <result property="prodPrice" column="PROD_PRICE"/>
+	    <result property="prodSale" column="PROD_SALE"/>
+	    <result property="prodOutline" column="PROD_OUTLINE"/>
+	    <result property="prodDetail" column="PROD_DETAIL" jdbcType="CLOB" javaType="java.lang.String"/>
+	    <result property="prodImg" column="PROD_IMG"/>
+	    <result property="prodTotalstock" column="PROD_TOTALSTOCK"/>
+	    <result property="prodInsdate" column="PROD_INSDATE"/>
+	    <result property="prodProperstock" column="PROD_PROPERSTOCK"/>
+	    <result property="prodSize" column="PROD_SIZE"/>
+	    <result property="prodColor" column="PROD_COLOR"/>
+	    <result property="prodDelivery" column="PROD_DELIVERY"/>
+	    <result property="prodUnit" column="PROD_UNIT"/>
+	    <result property="prodQtyin" column="PROD_QTYIN"/>
+	    <result property="prodQtysale" column="PROD_QTYSALE"/>
+	    <result property="prodMileage" column="PROD_MILEAGE"/>
+	    
+	    <association property="fgvo" resultMap="fileGroupMap"/>
+	    <collection property="cartVoList" resultMap="cartMap"/>
+	</resultMap>
+	
+		<resultMap type="fileGroupVo" id="fileGroupMap">
+		<result property="fileGroupNo" column="FILE_GROUP_NO"/>
+		<result property="fileRegdate" column="FILE_REGDATE"/>
+		<association property="fileDetailVoList" resultMap="fileDetailMap"></association>
+	</resultMap>
+	
+	<resultMap type="fileDetailVo" id="fileDetailMap">
+		<result property="fileSn" column="FILE_SN"/>
+		<result property="fileGroupNo" column="FILE_GROUP_NO"/>
+		<result property="fileOriginalName" column="FILE_ORIGINAL_NAME"/>
+		<result property="fileSaveName" column="FILE_SAVE_NAME"/>
+		<result property="fileSaveLocate" column="FILE_SAVE_LOCATE"/>
+		<result property="fileSize" column="FILE_SIZE"/>
+		<result property="fileExt" column="FILE_EXT"/>
+		<result property="fileMime" column="FILE_MIME"/>
+		<result property="fileFancysize" column="FILE_FANCYSIZE"/>
+		<result property="fileSaveDate" column="FILE_SAVE_DATE"/>
+		<result property="fileDowncount" column="FILE_DOWNCOUNT"/>
 	</resultMap>
 	
 	<resultMap type="cartVo" id="cartMap">
@@ -74,17 +97,28 @@
 		<result property="memDelete" column="MEM_DELETE"/>
 	</resultMap>
 	
-	<select id="prodList"  resultMap="buyerMap" parameterType="hashMap">
-	with t as(
-		SELECT row_number() over(order by b.buyer_id) rnum
-		, A.PROD_ID, A.PROD_NAME, A.PROD_BUYER, A.PROD_SALE, A.PROD_OUTLINE, A.PROD_DETAIL
-     , B.BUYER_ID, B.BUYER_NAME
-	FROM   BUYER B, PROD A
-	WHERE  B.BUYER_ID = A.PROD_BUYER
-	)
-	select t.*
-	from t
-	WHERE  T.RNUM BETWEEN (#{currentPage}*#{size}) - (#{size}-1) AND (#{currentPage}*#{size})
+	<select id="prodList" resultMap="buyerMap" parameterType="hashMap">
+		WITH t AS (
+		    SELECT 
+		        ROW_NUMBER() OVER (ORDER BY a.prod_id) AS rnum,
+		        A.PROD_ID, 
+		        A.PROD_NAME, 
+		        A.PROD_BUYER, 
+		        A.PROD_SALE, 
+		        A.PROD_OUTLINE, 
+		        A.PROD_DETAIL,
+		        B.BUYER_ID, 
+		        B.BUYER_NAME
+		    FROM 
+		        BUYER B
+		        JOIN PROD A ON B.BUYER_ID = A.PROD_BUYER
+		)
+		SELECT 
+		    t.*
+		FROM 
+		    t
+		WHERE  
+		    t.rnum BETWEEN ((#{currentPage} - 1) * #{size}) + 1 AND #{currentPage} * #{size}
 	</select>
 	
 	<select id="prodListTotal" resultType="int">
@@ -109,4 +143,66 @@
 		where mem_id=#{memId}
 	</select>
 
+	<insert id="insertTblUser" parameterType="tblUserVo">
+		insert into tbl_user(USER_ID,PASSWORD,NAME,EMAIL,BIR,ZIPCODE,ADDR,ADDRDET)
+		values(#{userId},#{password},#{name},#{email},#{bir},#{zipcode},#{addr},#{addrdet})
+	</insert>
+	
+	<insert id="insertCard" parameterType="cardVo">
+		insert into card(CARD_NO,CARD_YM,USER_ID)
+		values(#{cardNo},#{cardYm},#{userId})
+	</insert>
+	
+	<insert id="insertHobby" parameterType="tblHobbyVo">
+		insert into tbl_hobby(user_id, hobby)
+		values(#{userId}, #{hobby})	
+	</insert>
+		
+<!-- 	<insert id="insertCars" parameterType="carsVo"> -->
+<!-- 	    INSERT ALL -->
+<!-- 	    <foreach collection="list" item="item"> -->
+<!-- 	        INTO cars(user_id, car) VALUES (#{item.userId}, #{item.car}) -->
+<!-- 	    </foreach> -->
+<!-- 	    SELECT * FROM dual -->
+<!-- 	</insert> -->
+	<update id="insertCars"  parameterType="java.util.List">
+	    <foreach collection="list" item="item" open="INSERT ALL" close="SELECT * FROM DUAL" separator=" " index="idx">
+	        INTO cars(user_id, car) VALUES (#{item.userId}, #{item.car})
+	    </foreach>
+	</update>	
+	
+	<select id="lprodList" resultType="LprodVo">
+		select *
+		from lprod
+	</select>
+	
+	<select id="buyerList" resultType="buyerVo" parameterType="buyerVo">
+		select *
+		from buyer
+		where buyer_lgu=#{buyerLgu}
+	</select>
+	
+	<select id="createProdId" parameterType="prodVo" resultType="String">
+		select 'P'||(substr(nvl(max(prod_id),#{prodLgu}||'000000'),2)+1)
+		from prod
+		where prod_lgu=#{prodLgu}
+	</select>
+	
+	<insert id="registPost" parameterType="prodVo">
+		insert into prod(prod_id,prod_name,prod_lgu,prod_buyer,prod_sale,file_group_no
+		<if test="prodDetail!=null">,prod_detail</if>
+		)
+		values(#{prodId},#{prodName},#{prodLgu},#{prodBuyer},#{prodSale},#{fileGroupNo}
+		<if test="prodDetail!=null">,#{prodDetail}</if>
+		)
+	</insert>
+	
+	<select id="detail" parameterType="prodVo" resultMap="buyerMap">
+		select *
+		from prod a
+		inner join buyer d  on d.buyer_id=a.prod_buyer
+		left outer join file_group b on a.file_group_no=b.file_group_no
+		left outer join file_detail c on b.file_group_no=c.file_group_no
+		where a.prod_id=#{prodId}
+	</select>
 </mapper>
