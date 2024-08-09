@@ -110,6 +110,13 @@
 <!--                 </div> -->
 <!--               </div> -->
 			
+				<button type="button" class="btn btn-primary btn-flat" onclick="javascript:location.href='/prod/edit?prodId=${prod.prodId}'" >
+					수정
+				</button>
+				
+				<button type="button" class="btn btn-danger btn-flat" id="del">
+					삭제
+				</button>
 				<button type="button" onclick="javascript:location.href='/prod/list'" class="btn btn-default btn-lg btn-flat">
 					목록으로 돌아가기
 				</button>
@@ -160,5 +167,11 @@
       $('.product-image-thumb.active').removeClass('active')
       $(this).addClass('active')
     })
+  })
+  
+  $('#del').on('click',function(){
+	  if(confirm("정말 삭제하시겠습니까?")){
+		  location.href="/prod/delete?prodId=${prod.prodId}";
+	  }
   })
 </script>

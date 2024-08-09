@@ -30,4 +30,8 @@ public interface ProdService{
 	public int registPost(ProdVO vo);
 
 	public BuyerVO detail(ProdVO prodVo);
+
+	public int updatePost(ProdVO prodVo);
+
+	public int delete(String prodId);
 }

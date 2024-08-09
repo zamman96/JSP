@@ -11,12 +11,14 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.or.ddit.dao.ProdDao;
 import kr.or.ddit.mapper.FileGroupMapper;
 import kr.or.ddit.mapper.ProdMapper;
 import kr.or.ddit.service.ProdService;
+import kr.or.ddit.util.UploadController;
 import kr.or.ddit.vo.BuyerVO;
 import kr.or.ddit.vo.CardVO;
 import kr.or.ddit.vo.CarsVO;
@@ -40,6 +42,9 @@ public class ProdServiceImpl implements ProdService{
 	@Autowired
 	FileGroupMapper fileMapper;
 	
+	@Autowired
+	UploadController upload;
+	
 	@Override
 	public List<ProdVO> list(Map<String,Object> map) {
 		return this.mapper.prodList(map);
@@ -60,7 +65,10 @@ public class ProdServiceImpl implements ProdService{
 		return this.mapper.memDetail(vo);
 	}
 
+	// 회원 정보를 저장하다가 실패하거나 카드 등록 실패하면 모두 취소
+	// 모두 저장에 성공해야 성공하도록 처리
 	@Override
+	@Transactional
 	public int cardFormPost(TblUserVO vo) {
 //		1) tbl_user 테이블 insert
 		int result = this.mapper.insertTblUser(vo);
@@ -114,25 +122,55 @@ public class ProdServiceImpl implements ProdService{
 	}
 
 	@Override
+	@Transactional
 	public int registPost(ProdVO vo) {
+		long groupNo = upload.multiImageUpload(vo.getUploadFile());
+		vo.setFileGroupNo(groupNo);
 		return this.mapper.registPost(vo);
 	}
-
-	// 연 / 월 / 일 폴더 생성
-	public String getFolder() {
-		// 2024-08-06 형식(format)지정
-		// 간단한 날짜 형식
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date today = new Date();
-		String str = sdf.format(today);
-		// 2024-08-06 > 2024\\08\\06
-		return str.replace("-", File.separator);
-	}
-
 
 	@Override
 	public BuyerVO detail(ProdVO prodVo) {
 		return this.mapper.detail(prodVo);
+	}
+
+	@Override
+	@Transactional
+	public int updatePost(ProdVO prodVo) {
+		MultipartFile[] multipartFiles = prodVo.getUploadFile();
+		if(multipartFiles[0].getOriginalFilename().length()>0) {
+			ProdVO vo = this.mapper.fileInfo(prodVo);
+			int result = 0;
+			long fileGroupNo = this.upload.multiImageUpload(multipartFiles);
+			prodVo.setFileGroupNo(fileGroupNo);
+			if(vo!=null) {
+				FileGroupVO fg = vo.getFgvo();
+				result = this.mapper.updatePost(prodVo);
+				result = this.upload.deleteFile(fg);
+			}else {
+				result = this.mapper.updatePost(prodVo);
+			}
+			return result;
+		} else {
+			return this.mapper.updatePost(prodVo);
+		}
+	}
+
+	@Override
+	@Transactional
+	public int delete(String prodId) {
+		int result = 0;
+		ProdVO prodVo = new ProdVO();
+		prodVo.setProdId(prodId);
+		ProdVO vo = this.mapper.fileInfo(prodVo);
+		if(vo!=null) {
+			FileGroupVO fg = vo.getFgvo();
+			result += this.upload.deleteFile(fg);
+			result += this.mapper.delete(prodId);
+		}else {
+			result = this.mapper.delete(prodId);
+		}
+		return result;
 	}
 
 }

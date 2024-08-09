@@ -6,10 +6,12 @@ import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.or.ddit.mapper.FileGroupMapper;
@@ -33,6 +35,7 @@ public class UploadController {
 	/**다중 이미지 업로드
 	 * return : 20240808001(FILE_GROUP.FILE_GROUP_NO)
 	 */	
+	@Transactional
 	public long multiImageUpload(MultipartFile[] multipartFiles) {
 		long fileGroupNo = 0L;
 		int result = 0;
@@ -163,6 +166,25 @@ public class UploadController {
 		
 		return retFormat;
 	}
+	
+	@Transactional
+	public int deleteFile(FileGroupVO fgvo) {
+		int result = 0;
+		// 파일 삭제
+		List<FileDetailVO> list = fgvo.getFileDetailVoList();
+		for(FileDetailVO fd : list) {
+			String path = "C:"+fd.getFileSaveLocate().replace("/", "\\");
+			File file = new File(path);
+			file.delete();
+		}
+		
+		// 파일 detail 삭제
+		result=this.fileGroupMapper.fileDetailDelete(fgvo);
+		
+		// 파일 group 삭제
+		result=this.fileGroupMapper.fileGroupDelete(fgvo);
+		return result;
+	};
 }
 
 

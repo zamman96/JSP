@@ -10,4 +10,8 @@ public interface FileGroupMapper {
 	public int insertFileGroup(FileGroupVO fgvo);
 	
 	public int insertFileDetail(FileDetailVO fdvo);
+	
+	public int fileGroupDelete(FileGroupVO fgvo);
+	
+	public int fileDetailDelete(FileGroupVO fgvo);
 }

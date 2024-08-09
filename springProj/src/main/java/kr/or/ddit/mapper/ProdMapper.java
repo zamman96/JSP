@@ -42,4 +42,10 @@ public interface ProdMapper {
 	public int registPost(ProdVO vo);
 	
 	public BuyerVO detail(ProdVO vo);
+
+	public int updatePost(ProdVO prodVo);
+
+	public int delete(String prodId);
+	
+	public ProdVO fileInfo(ProdVO pvo);
 }

@@ -287,8 +287,60 @@
 		    <artifactId>thumbnailator</artifactId>
 		    <version>0.4.8</version>
 		</dependency>
-				
 		<!-- 파일업로드 끝  -->
+		
+		<!-- 입력값을 검증하기 위한 라이브러리 의존 관계 정의 시작 
+      스프링 
+      M(Model) : Service, ServiceImple, Mapper
+      V(View) : JSP
+      C(Controller) : Controller 
+      Bean(자바빈 클래스, ArticleVO) Validation(유효성검사) 기능을 이용해 
+      요청 파라미터 값이 바인딩된(멤버변수에 세팅된) 도메인 클래스(ArticleVO)의 입력값 검증을 함
+      요청 파라미터 : ?articleNo=112&title=개똥이
+      public String write(골뱅이ModelAttribute ArticleVO articleVO)
+      -->
+      <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
+      <dependency>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-validator</artifactId>
+          <version>5.2.5.Final</version>
+      </dependency>
+		
+		<!-- 스프링 시큐리티 라이브러리 의존관계 정의 시작 -->
+      <!-- 스프링 시큐리티를 웹에서 동작하도록 해줌 -->
+      <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
+      <dependency>
+          <groupId>org.springframework.security</groupId>
+          <artifactId>spring-security-web</artifactId>
+          <version>5.0.7.RELEASE</version>
+      </dependency>
+      
+      <!-- 스프링 시큐리티 설정을 도와줌 -->
+      <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
+      <dependency>
+          <groupId>org.springframework.security</groupId>
+          <artifactId>spring-security-config</artifactId>
+          <version>5.0.7.RELEASE</version>
+      </dependency>
+      
+      <!-- 스프링 시큐리티 일반 기능 -->
+      <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+      <dependency>
+          <groupId>org.springframework.security</groupId>
+          <artifactId>spring-security-core</artifactId>
+          <version>5.0.7.RELEASE</version>
+      </dependency>
+      
+      <!-- 스프링 시큐리티와 태그라이브러리를 연결해줌 -->
+      <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-taglibs -->
+      <dependency>
+          <groupId>org.springframework.security</groupId>
+          <artifactId>spring-security-taglibs</artifactId>
+          <version>5.0.7.RELEASE</version>
+      </dependency>
+      
+      <!-- 스프링 시큐리티 라이브러리 의존관계 정의 끝 -->
+		
 	</dependencies>
     <build>
         <plugins>

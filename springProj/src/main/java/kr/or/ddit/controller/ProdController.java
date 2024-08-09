@@ -10,6 +10,10 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,9 +39,6 @@ public class ProdController {
 	
 	@Autowired
 	ProdService service;
-	
-	@Autowired
-	UploadController upload;
 	
 	@ModelAttribute
 	public void prodInit(Model model) {
@@ -118,10 +119,15 @@ public class ProdController {
 	}
 	
 	@GetMapping("/regist")
-	public String regist(Model model) {
-		List<LprodVO> lprod = this.service.lprodList();
-		model.addAttribute("lprod",lprod);
+	public String regist(Model model,@ModelAttribute ProdVO prodVO) {
 		return "prod/regist";
+	}
+	
+	@ResponseBody
+	@GetMapping("/lprod")
+	public List<LprodVO> lprodList(){
+		List<LprodVO> lprod = this.service.lprodList();
+		return lprod;
 	}
 	
 	@ResponseBody
@@ -141,13 +147,53 @@ public class ProdController {
 	}
 	
 	@PostMapping("/registPost")
-	public String registPost(ProdVO prodVo) {
+	// BindingResult를 처리하기 위해선 Spring form이 필요하다
+	/* p.384 (실전스프링웹개발)
+    BindingResult에는 요청 파라미터의 바인딩 오류와 입력값 검증(숫자타입의 멤버변수에 문자가 옴)  
+    오류 정보가 저장됨
+     - hasErrors() : 오류 발생 시 true를 반환 
+   */
+  //입력값 검증을 할 도메인 클래스(ProdVO)에 골뱅이Validated를 지정함
+  //입력값 검증 대상의 도메인 클래스 직후에 BindingResult를 정의함. 
+  //BindingResult에는 요청 파라미터 데이터의 바인딩(set..) 오류와 
+  // 입력값 검증 오류 정보가 저장됨
+	public String registPost(@Validated ProdVO prodVo, BindingResult result, Model model) {
 		log.info("vo >>"+prodVo);
-		long groupNo = upload.multiImageUpload(prodVo.getUploadFile());
-		prodVo.setFileGroupNo(groupNo);
-		int result = this.service.registPost(prodVo);
-		log.info("result >> "+result);
-//		return "redirect: /prod/list";
+		// 도메인클래스(ProdVO의 prodName 및 prodSave 멤버변수(프로퍼티)에 오류가 발생함
+	     // brResult.hasErrors() => true
+		if(result.hasErrors()) { // 오류 발생
+			// Global + Field
+			List<ObjectError> allErrors = result.getAllErrors();
+			// 객체(중첩된 자바 빈_와 관련된 오류
+			List<ObjectError> globalErrors = result.getGlobalErrors();
+			// 프로퍼티와 관련된 오류
+			List<FieldError> fieldErrors = result.getFieldErrors();
+			
+			for(ObjectError objectError : allErrors) {
+	            log.info("allError : " + objectError);
+	         }
+	         
+	         for(ObjectError objectError : globalErrors) {
+	            log.info("globalError : " + objectError);
+	         }
+	         
+	         for(FieldError fieldError: fieldErrors) {
+	            log.info("fieldError : " + fieldError.getDefaultMessage());
+	         }
+	         
+	         Map<String, Object> errors = new HashMap<String, Object>();
+	         
+	         if(prodVo.getProdSale()==0) {
+	        	 errors.put("prodSale", "판매가는 필수 입력 항목입니다");
+	        	 model.addAttribute("errors", errors);
+	         }
+	         // redirect로는 안됨
+	         // 오류 정보도 함께 이동
+	         return "prod/regist";
+		}
+		
+		int sresult = this.service.registPost(prodVo);
+		log.info("result >> "+sresult);
 		return "redirect: /prod/detail?prodId="+prodVo.getProdId();
 	}
 	
@@ -160,5 +206,37 @@ public class ProdController {
 		log.info("vo >>"+buyer);
 		model.addAttribute("buyer", buyer);
 		return "prod/detail";
+	}
+	
+	@GetMapping("/edit")
+	public String edit(@RequestParam("prodId") String prodId, Model model) {
+		ProdVO prodVo = new ProdVO();
+		prodVo.setProdId(prodId);
+		log.info("vo >>"+prodVo);
+		BuyerVO buyer = this.service.detail(prodVo);
+		log.info("vo >>"+buyer);
+		model.addAttribute("buyer", buyer);
+		
+		List<LprodVO> lprod = this.service.lprodList();
+		
+		List<BuyerVO> buySel = this.service.buyerList(buyer);
+		model.addAttribute("sel", buySel);
+		model.addAttribute("lprod", lprod);
+		return "prod/edit";
+	}
+	
+	@PostMapping("/updatePost")
+	public String updatePost(ProdVO prodVo) {
+		log.info("vo >>"+prodVo);
+		int result = this.service.updatePost(prodVo);
+		log.info("result >> "+result);
+		return "redirect: /prod/detail?prodId="+prodVo.getProdId();
+	}
+	
+	@GetMapping("delete")
+	public String delete(@RequestParam("prodId") String prodId) {
+		int result = this.service.delete(prodId);
+		log.info("result >> "+result);
+		return "redirect: /prod/list";
 	}
 }

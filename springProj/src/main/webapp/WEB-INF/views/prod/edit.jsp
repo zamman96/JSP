@@ -1,16 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <link type="text/css" href="/resources/ckeditor5/sample/css/sample.css" rel="stylesheet" media="screen"/>
 <script type="text/javascript" src="/resources/ckeditor5/ckeditor.js"></script>
 <script type="text/javascript" src="/resources/js/jquery.min.js"></script>
-<div class="card card-success">
+<div class="card card-info">
 	<div class="card-header">
-		<h2>상품 등록</h2>
+		<h2>상품 수정</h2>
 	</div>
-
-	<form:form modelAttribute="prodVO"
-	 id="frm" action="/prod/registPost" method="post" enctype="multipart/form-data">
+<c:set var="prod" value="${buyer.prodVoList[0]}"/>
+	<form id="frm" action="/prod/updatePost" method="post" enctype="multipart/form-data">
 		<div class="card-body">
 			<div class="row">
 				<div class="col-sm-6">
@@ -18,15 +16,18 @@
 					<div class="form-group">
 						<label for="prodId">상품 코드</label> <input required type="text"
 							class="form-control" readonly placeholder="상품분류를 선택해주세요"
-							name="prodId" id="prodId">
+							name="prodId" id="prodId" value="${prod.prodId}">
 					</div>
 				</div>
 				<div class="col-sm-6">
 					<div class="form-group">
-						<label for="prodLgu">상품 분류 코드</label> <select required="required" class="form-control"
+						<label for="prodLgu">상품 분류 코드</label> <select disabled="disabled" required="required" class="form-control"
 							id="prodLgu" name="prodLgu">
-							<option value="" selected="selected" disabled="disabled">선택해주세요</option>
-							
+							<c:forEach var="lprod" items="${lprod}">
+								<option value="${lprod.lprodGu}"
+							<c:if test="${prod.prodLgu==lprod.lprodGu}">selected</c:if>
+								>${lprod.lprodNm}</option>
+							</c:forEach>
 						</select>
 					</div>
 				</div>
@@ -35,18 +36,21 @@
 				<div class="col-sm-6">
 					<!-- text input -->
 					<div class="form-group">
-						<label for="prodName">상품 명</label> 
-						<form:input class="form-control" placeholder="상품명" path="prodName" />
-						<code style="color:red;">
-							<form:errors path="prodName"></form:errors>
-						</code>
+						<label for="prodName">상품 명</label> <input required type="text"
+							class="form-control" placeholder="상품명" name="prodName" value="${prod.prodName}"
+							id="prodName">
 					</div>
 				</div>
 				<div class="col-sm-6">
 					<div class="form-group">
-						<label for="prodBuyer">거래처</label> <select required class="form-control"
+						<label for="prodBuyer">거래처</label> <select  value="${prod.prodBuyer}" required class="form-control"
 							id="prodBuyer" name="prodBuyer">
-							<option value="" selected="selected" disabled="disabled">상품 분류를 선택해주세요</option>
+								<option value="">선택해주세요</option>
+							<c:forEach var="vo" items="${sel}">
+								<option value="${vo.buyerId}"
+							<c:if test="${prod.prodBuyer==vo.buyerId}">selected</c:if>
+								>${vo.buyerName}</option>
+							</c:forEach>
 						</select>
 					</div>
 				</div>
@@ -55,11 +59,9 @@
 				<div class="col-sm-6">
 					<!-- textarea -->
 					<div class="form-group">
-						<label for="prodSale">상품 판매가</label> 
-						<input type="number" class="form-control" placeholder="판매가" name="prodSale"/>
-						<code style="color:red;">
-							${errors.prodSale}
-						</code>
+						<label for="prodSale">상품 판매가</label> <input required type="number"
+							class="form-control" placeholder="판매가" value="${prod.prodSale}" name="prodSale"
+							id="prodSale">
 					</div>
 				</div>
 				<div class="col-sm-6">
@@ -72,43 +74,38 @@
 						</div>
 					</div>
 					<div id="pImg">
-<!-- 						<img src="/resources/images/P1234.jpg" style="width: 100px; border:1px solid #ced4da;border-radius: .25rem;" /> -->
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-6">
-					<!-- textarea -->
-					<div class="form-group">
-						<label for="prodSale">최근 입고일자</label> 
-						<form:input placeholder="ex)2024-08-09" class="form-control" path="prodInsdate"/>
-						<code style="color:red;">
-							<form:errors path="prodInsdate"></form:errors>
-						</code>
+					<c:forEach var="img" items="${prod.fgvo.fileDetailVoList}">
+						<div class="image-container" style="display: inline-block; position: relative; margin: 5px;">
+						<img src="${img.fileSaveLocate}" style="width: 100px; border:1px solid #ced4da; border-radius: .25rem;" />
+<!-- 						<button type="button" class="btn btn-tool" onclick="removeImage(this)" style="position: absolute; top: 5px; right: -1px; cursor: pointer;"> -->
+<!-- 							<i class="fas fa-times"></i> -->
+<!-- 						</button> -->
+						</div>
+					</c:forEach>
 					</div>
 				</div>
 			</div>
 			<!-- input states -->
 			<div class="form-group">
 				<label class="col-form-label" for="prodDetail">상품 상세 설명</label>
-				<div id="prodDetailTemp"></div>
+				<div id="prodDetailTemp">${prod.prodDetail}</div>
 				<textarea hidden class="form-control" rows="3" id="prodDetail"
-					placeholder="상품 상세 설명" name="prodDetail" cols=""></textarea>
+					placeholder="상품 상세 설명" name="prodDetail" cols="">${prod.prodDetail}</textarea>
 			</div>
 		</div>
 		<!-- /.card-body -->
 		<div class="card-footer row" style="justify-content: space-between;">
 			<div>
-				<a href="/prod/list" class="btn btn-info">목록</a>
+				<a href="/prod/detail?prodId=${prod.prodId}" class="btn btn-info">취소</a>
 			</div>
 			<div>
-				<button type="submit" class="btn btn-warning">등록</button>
+				<button type="submit" class="btn btn-warning">수정</button>
 			</div>
 			<div>
 				<button type="reset" id="reset" class="btn btn-secondary">초기화</button>
 			</div>
 		</div>
-	</form:form>
+	</form>
 </div>
 <script>
 // uploadUrl => 이미지 업로드 시 요청할 요청URI
@@ -117,8 +114,6 @@
 ClassicEditor.create( document.querySelector('#prodDetailTemp'),{ckfinder:{uploadUrl:'/image/upload'}})
  .then(editor=>{window.editor=editor;})
  .catch(err=>{console.error(err.stack);});
-
-
 
 document.getElementById('uploadFile').addEventListener('change', function(event) {
     const files = event.target.files; // 업로드된 파일 목록
@@ -192,18 +187,9 @@ function removeImage(button) {
     }
 }
 
+
 $(function(){
-	$.ajax({
-		url : "/prod/lprod",
-		success : function(res){
-			let str = ""
-			console.log(res);
-			$.each(res, function(){
-				str+= "<option value='"+this.lprodGu+"'>"+this.lprodNm+"</option>";
-			})
-			$('#prodLgu').append(str);
-		}
-	})
+	window.editor.setData("${prod.prodDetail}");
 	
 	
 	$(".ck-blurred").keydown(function(){
@@ -216,43 +202,21 @@ $(function(){
 		$("#prodDetail").val(window.editor.getData());
 	});
 	
-	$('#prodLgu').on('change',function(){
-		let lgu = $('#prodLgu').val();
-		// prodId 생성
-		$.ajax({
-			url : "/prod/createProdId",
-			data : JSON.stringify({"prodLgu" : lgu}),
-			contentType : 'application/json',
-			type : "post",
-			success : function(res){
-				$('#prodId').val(res);
-			}
-		})
-		
-		// buyer select 설정
-		$.ajax({
-			url : "/prod/buyer",
-			data : JSON.stringify({"buyerLgu" : lgu}),
-			contentType : 'application/json',
-			type : "post",
-			success : function(res){
-				console.log(res);
-				let str="<option value='' selected disabled>선택해주세요</option>";
-				$.each(res, function(){
-					str += "<option value='"+this.buyerId+"'>"+this.buyerName+"</option>";
-				})
-				if(res.length==0){
-					str = "<option value='' selected disabled>해당하는 거래처가 없습니다</option>"
-				}
-				$('#prodBuyer').html(str);
-			}
-		})
-	})
+
+	let lgu = $('#prodLgu').val();
 	
-	// reset시 buyer select도 리셋
-	$('#reset').on('click',function(){
-		let str="<option value='' selected disabled>상품 분류를 선택해주세요</option>";
-		$('#prodBuyer').html(str);
-	})
+	// 파일 label 이름 변경
+	$('#uploadFile').on('change', function() {
+		console.log($('#uploadFile').get(0).files);
+	    // 선택된 파일이 있는지 확인
+	    if ($('#uploadFile').get(0).files.length > 0) {
+	        // 파일 이름을 레이블에 설정
+	        $('#fileLabel').text($('#uploadFile').get(0).files[0].name);
+	    } else {
+	        // 파일이 선택되지 않았을 경우 기본 텍스트로 설정
+	        $('#fileLabel').text('파일을 선택해주세요');
+	    }
+	});
+	
 })
 </script>

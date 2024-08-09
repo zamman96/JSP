@@ -112,6 +112,8 @@
 		    FROM 
 		        BUYER B
 		        JOIN PROD A ON B.BUYER_ID = A.PROD_BUYER
+		    WHERE
+		    	NOT EXISTS (SELECT PROD_ID FROM PROD WHERE A.PROD_DEL_YN = 'Y')
 		)
 		SELECT 
 		    t.*
@@ -125,6 +127,8 @@
 		SELECT count(*)
 		FROM   BUYER B, PROD A
 		WHERE  B.BUYER_ID = A.PROD_BUYER
+		AND
+		    NOT EXISTS (SELECT PROD_ID FROM PROD WHERE A.PROD_DEL_YN = 'Y')
 	</select>
 	
 	
@@ -205,4 +209,31 @@
 		left outer join file_detail c on b.file_group_no=c.file_group_no
 		where a.prod_id=#{prodId}
 	</select>
+	
+	<update id="updatePost" parameterType="prodVo">
+		update prod 
+		set prod_name=#{prodName},
+		prod_buyer=#{prodBuyer},
+		prod_sale=#{prodSale},
+		prod_detail=#{prodDetail}
+		<if test="fileGroupNo!=null">
+		,file_group_no=#{fileGroupNo}
+		</if>
+		where prod_id = #{prodId}
+	</update>
+	
+	<select id="fileInfo" parameterType="prodVo" resultMap="prodMap">
+		select *
+		from prod a, file_group b, file_detail c
+		where a.file_group_no=b.file_group_no
+		and b.file_group_no=c.file_group_no
+		and a.prod_id=#{prodId}
+	</select>
+	
+	<update id="delete" parameterType="String">
+		update prod
+		set prod_del_yn = 'Y',
+		file_group_no = null
+		where prod_id=#{prod_id}
+	</update>
 </mapper>

@@ -33,7 +33,7 @@
 					<c:forEach var="prod" items="${buyer.prodVoList}">
 						<tr class="click" data-prod-id="${prod.prodId}">
 							<td>${rowNumber + 1}</td>
-							<td><a href="/prod/detail?prodId=${prod.prodId}">${prod.prodName}</a></td>
+							<td>${prod.prodName}<a href="/prod/detail?prodId=${prod.prodId}" class="badge bg-primary" title="${prod.prodName}">상세보기</a></td>
 							<td><fmt:formatNumber value="${prod.prodSale}" pattern="#,###" type="number"/></td>
 							<td>${buyer.buyerName}</td>
 						</tr>

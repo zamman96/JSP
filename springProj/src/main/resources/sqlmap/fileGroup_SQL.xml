@@ -22,5 +22,15 @@
 		#{fileSaveLocate},#{fileSize},#{fileExt},#{fileMime},#{fileFancysize},
 		sysdate, #{fileDowncount})
 	</insert>
+	
+	<delete id="fileGroupDelete" parameterType="fileGroupVo">
+		delete from file_group
+		where file_group_no=#{fileGroupNo}
+	</delete>
+	
+	<delete id="fileDetailDelete" parameterType="fileGroupVo">
+		delete from file_detail
+		where file_group_no=#{fileGroupNo}
+	</delete>
 </mapper>
                   
