@@ -105,7 +105,7 @@ public class UploadController {
 				result += this.fileGroupMapper.insertFileDetail(fileDetailVO);
 				
 				fileGroupNo = fileGroupVO.getFileGroupNo();
-			} catch (IllegalStateException | IOException e) {
+			} catch (Exception e) {
 				log.error(e.getMessage());
 			}
 		}

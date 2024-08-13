@@ -30,14 +30,14 @@ public class ArticlePage<T> {
 	
 	//생성자(Constructor) : 페이징 정보를 생성
 	//					753				1				10			select결과10행
-	public ArticlePage(int total, int currentPage, int size, List<T> content, Map<String,Object> keyword) {
+	public ArticlePage(int total, int currentPage, int size, List<T> content, Map<String, Object> keyword) {
 		//size : 한 화면에 보여질 목록의 행 수
 		this.total = total;//753
 		this.currentPage = currentPage;//1
 		this.content = content;
 		this.keyword = keyword;
-		if(keyword.containsKey("year")) {
-			this.year = (int)keyword.get("year");
+		if (keyword.containsKey("year")) {
+		    this.year = Integer.parseInt(keyword.get("year")+""); // Integer로 캐스팅 후 int 값 추출
 		}
 		
 		//전체글 수가 0이면?

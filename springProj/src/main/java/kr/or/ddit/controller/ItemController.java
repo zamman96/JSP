@@ -93,7 +93,7 @@ public class ItemController {
 		// 파일객체.transferTo(계획)
 		try {
 			uploadFile.transferTo(uploadPath);
-		} catch (IllegalStateException | IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

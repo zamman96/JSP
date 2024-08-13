@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
@@ -11,12 +12,32 @@
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <!-- 스프링 시큐리티 표현식 : 인증 및 권한 정보에 따라 화면을 동적으로 구성할 수 있고, 로그인 한 사용자 정보를 보여줄 수 있음 -->
+      <!-- 로그인 전 -->
+      <sec:authorize access="isAnonymous()">
         <div class="image">
-          <img src="/resources/adminlte3/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+          <img src="/resources/images/basic.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Alexander Pierce</a>
+          <a href="#" class="d-block">로그인을 해주세요</a>
         </div>
+      </sec:authorize>
+      <!-- 로그인 전 -->
+      <!-- 로그인 후 -->
+      <sec:authorize access="isAuthenticated()">
+        <div class="image">
+          <img src="/resources/images/NpcNmlDuk11.png" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info">
+          <sec:authentication property="principal.memberVO" var="user"/>
+          <a href="#" class="d-block">${user.memName}</a>
+          <form action="/logout" method="post">
+	          <button type="submit" class="btn btn-block btn-outline-primary btn-xs">로그아웃</button>
+	          <sec:csrfInput/>
+          </form>
+        </div>
+      </sec:authorize>
+      <!-- 로그인 후 -->
       </div>
 
       <!-- SidebarSearch Form -->

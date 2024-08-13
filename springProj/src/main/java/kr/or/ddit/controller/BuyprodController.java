@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import kr.or.ddit.service.BuyprodService;
 import kr.or.ddit.util.ArticlePage;
 import kr.or.ddit.vo.BuyprodVO;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -43,7 +44,7 @@ public class BuyprodController {
 		int size = 3;
 		map.put("size", size);
 		int total = this.service.getTotal(map);
-		log.info("total "+total);
+//		Log.info("total "+total);
 		map.put("currentPage", currentPage);
 		log.info("map >>"+map);
 		List<BuyprodVO> list = this.service.list(map);
@@ -63,7 +64,7 @@ public class BuyprodController {
 		map.put("month", month);
 		map.put("amt", amt);
 //		if(map.get("year").equals("0")) {
-		if((int)map.get("year")==0) {
+		if(Integer.parseInt(map.get("year")+"")==0) {
 			map.put("year", 2020);
 		}
 		log.info("map >>"+map);

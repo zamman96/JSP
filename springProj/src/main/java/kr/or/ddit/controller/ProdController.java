@@ -47,7 +47,7 @@ public class ProdController {
 	
 	@GetMapping("/list")
 	public String list(Model model, @RequestParam(value="currentPage", required = false, defaultValue = "1") int currentPage) {
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		int size = 10;
 		int total = this.service.getTotal();
 		map.put("currentPage", currentPage);
@@ -84,7 +84,7 @@ public class ProdController {
 	@ResponseBody
 	@GetMapping("/prodlist")
 	public ArticlePage<ProdVO> prodList(Model model, @RequestParam(value="currentPage", required = false, defaultValue = "1") int currentPage) {
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		int size = 10;
 		int total = this.service.getTotal();
 		map.put("currentPage", currentPage);
