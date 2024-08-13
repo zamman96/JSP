@@ -36,16 +36,16 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 				roleNames.add(authority.getAuthority());
 			});
 			log.info("roleNames : "+roleNames);
-//	      if(roleNames.contains("ROLE_ADMIN")) {
-//	         response.sendRedirect("/notice/list");
-//	         return;
-//	      }
-	      
-//	      if(roleNames.contains("ROLE_MEMBER")) {
-//	         response.sendRedirect("/board/list");
-//	         return;
-//	      }
 			
-			super.onAuthenticationSuccess(request, response, auth);
+	      if(roleNames.contains("ROLE_ADMIN")) {
+	         response.sendRedirect("/notice/regist");
+	         return;
+	      } else { // ROLE_MEMBER
+	      //if(roleNames.contains("ROLE_MEMBER")) {
+	         response.sendRedirect("/freelancer/member/list");
+	         return;
+	      }
+			
+			//super.onAuthenticationSuccess(request, response, auth);
 		}
 }

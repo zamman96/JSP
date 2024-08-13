@@ -19,7 +19,7 @@
           <img src="/resources/images/basic.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">로그인을 해주세요</a>
+          <a href="/login" class="d-block">로그인을 해주세요</a>
         </div>
       </sec:authorize>
       <!-- 로그인 전 -->
@@ -28,10 +28,10 @@
         <div class="image">
           <img src="/resources/images/NpcNmlDuk11.png" class="img-circle elevation-2" alt="User Image">
         </div>
-        <div class="info">
+        <div class="info" style="display:flex;">
           <sec:authentication property="principal.memberVO" var="user"/>
-          <a href="#" class="d-block">${user.memName}</a>
-          <form action="/logout" method="post">
+          <a href="#" class="d-block">${user.memName} (${user.memId})</a>
+          <form action="/logout" method="post" style="margin-left: 5px;">
 	          <button type="submit" class="btn btn-block btn-outline-primary btn-xs">로그아웃</button>
 	          <sec:csrfInput/>
           </form>

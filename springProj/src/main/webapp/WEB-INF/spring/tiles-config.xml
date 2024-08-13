@@ -18,6 +18,24 @@
    <definition name="*/*" extends="tiles-layout">
       <put-attribute name="body" value="/WEB-INF/views/{1}/{2}.jsp" />
    </definition>
+   
+   
+   <!-- freelancer layout 시작 -->
+   <definition name="freelancer-layout" template="/WEB-INF/views/freelancerTiles/index.jsp">
+      <put-attribute name="header" value="/WEB-INF/views/freelancerTiles/header.jsp" />
+      <put-attribute name="body" value="" />
+      <put-attribute name="footer" value="/WEB-INF/views/freelancerTiles/footer.jsp" />
+   </definition>
+   <!-- name의 freelancer/member/*은 body의 value에서 1에 해당
+      controller에서 forwarding 시 return "1/2";
+      return "freelancer/member/list";
+    -->
+   <definition name="freelancer/member/*" extends="freelancer-layout">
+      <put-attribute name="body" value="/WEB-INF/views/freelancer/member/{1}.jsp" />
+   </definition>
+   <!-- freelancer layout 끝 -->
+
+   
    <!--  return "accessError" -->
    <definition name="tiles-layout2" template="/WEB-INF/views/tiles/index.jsp">
       <put-attribute name="header" value="/WEB-INF/views/tiles/header.jsp" />

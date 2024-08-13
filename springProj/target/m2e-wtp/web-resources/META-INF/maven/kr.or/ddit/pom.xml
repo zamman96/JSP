@@ -340,6 +340,32 @@
       </dependency>
       
       <!-- 스프링 시큐리티 라이브러리 의존관계 정의 끝 -->
+      
+       <!-- AOP(Aspect Oriented Programming : 관점 지향 프로그래밍) 시작 
+      1) aspectjrt => 이미 있으므로 생략
+      2) aspectjweaver => 없으므로 의존 관계를 정의
+      -->
+      <!-- https://mvnrepository.com/artifact/aspectj/aspectjweaver
+      1.5.4 -->
+      <!-- AspectJ RunTime -->
+      <dependency>
+          <groupId>org.aspectj</groupId>
+          <artifactId>aspectjrt</artifactId>
+          <version>${org.aspectj-version}</version>
+      </dependency>    
+      <!-- AspectJ Weaver -->
+      <dependency>
+          <groupId>org.aspectj</groupId>
+          <artifactId>aspectjweaver</artifactId>
+          <version>${org.aspectj-version}</version>
+      </dependency>
+      <!-- AspectJ Tools -->
+      <dependency>
+          <groupId>org.aspectj</groupId>
+          <artifactId>aspectjtools</artifactId>
+          <version>${org.aspectj-version}</version>
+      </dependency>
+      <!-- AOP(Aspect Oriented Programming : 관점 지향 프로그래밍) 끝 -->
 		
 	</dependencies>
     <build>
