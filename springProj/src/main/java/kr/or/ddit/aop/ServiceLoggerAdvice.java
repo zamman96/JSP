@@ -85,7 +85,7 @@ public class ServiceLoggerAdvice {
 		// 조인 포인트 완료 후 실행. 예외 발생이 되더라도 항상 실행 됨
 		@After("execution(* kr.or.ddit.*..*(..))")
 		public void endLog(JoinPoint jp) {
-			log.info("endLog");
+			log.info("--- endLog ---");
 			//.getSignature() : 어떤 클래스의 어떤 메서드가 실행되었는지 보여줌. 파라미터 타입은 무엇인지 보여줌
 			// kr.or.ddit.service.BoardService.register(BoardVO)
 			log.info("endLog : " + jp.getSignature());

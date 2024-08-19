@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xmlns:security="http://www.springframework.org/schema/security"
+   xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 접근 거부 클래스 객체 생성 -->
+	<bean id="customAccessDenied" class="kr.or.ddit.security.CustomAccessDeniedHandler"></bean>
+	<!-- 로그인 성공 클래스 객체 생성 -->
+	<bean id="customLoginSuccess" class="kr.or.ddit.security.CustomLoginSuccessHandler"></bean>		
+	<!-- password Encoder -->
+	<bean id="customPasswordEncoder" class="kr.or.ddit.security.CustomNoOpPasswordEncoder"></bean>
+	<!-- 프레임워크에서 지원하는 Encoder -->
+	<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
+	
+	<!-- 스프링 시큐리티의 UserDetailsService를 구현한 클래스를 빈으로 등록 -->
+	<bean id="customUserDetailsService" class="kr.or.ddit.security.CustomUserDetailsService"></bean>
+	
+	<security:http>
+<!-- 		<security:intercept-url pattern="/board/list" access="permitAll"/> -->
+		<!-- 폼 기반 인증 기능을 사용 -->
+		<!-- 사용자가 정의한 로그인 페이지의 URI를 지정함
+		사용자가 정의한 class를 로그인 성공 처리자로 지정 (authentication-success-handler-ref) -->
+		<security:form-login login-page="/login" authentication-success-handler-ref="customLoginSuccess"/>
+		
+		<!-- //// 방법 1. URI로 요청하는 방법 error-page //// -->
+		<!-- 접근 거부 처리자(HTTP 상태 403 - 금지됨 : 권한 없음) 
+		로그인은 됐지만 요청URI에 대한 권한이 없다면 /accessError 요청 URI로 자동 재요청됨
+		-->
+<!-- 		<security:access-denied-handler error-page="/accessError"/> -->
+		<!-- //// 방법 2. 등록한 사용자 정의 class를 접근 거부 처리자로 지정 ref //// -->
+		<security:access-denied-handler ref="customAccessDenied"/>
+		
+		<!-- dataSource를 통해 지정한 Database의 약속된 테이블(PERSISTENT_LOGINS)을
+      		이용하여 기존 로그인 정보를 기록함 -->
+      <!-- token-validity-seconds : 쿠키의 유효시간(초) 604800초는 7일 -->
+		<security:remember-me data-source-ref="dataSource" token-validity-seconds="604800" />
+		
+		<!-- 로그아웃 처리를 위한 URI지정, 로그아웃한 후 세션을 무효화 -->
+		<!-- 로그아웃을 하면 자동 로그인에 사용된 쿠키도 함께 삭제해 줌  invalidate-session="true"-->
+		<security:logout logout-url="/logout" invalidate-session="true" delete-cookies="remember-me,JSESSION_ID"/>
+	</security:http>
+	
+	<!-- 스프링 시큐리니티 5부터 기본적으로 PasswordEncoder를 지정해야 하는데,
+      그 이유는 사용자 테이블(USERS)에 비밀번호를 암호화하여 저장해야 하므로..
+      우리는 우선 비밀번호를 암호화 처리 하지 않았으므로
+      암호화 하지 않는 PasswordEncoder를 직접 구현하여 지정하기로 함
+      noop : no option password
+    -->
+	<security:authentication-manager>
+		<security:authentication-provider user-service-ref="customUserDetailsService">
+<!-- 		<security:authentication-provider> -->
+<!--  			<security:user-service> -->
+ 			<!-- name 아이디, authorities 권한 --> 
+<!-- 				<security:user name="member" password="{noop}java" authorities="ROLE_MEMBER"/> -->
+<!-- 				<security:user name="admin" password="{noop}java" authorities="ROLE_MEMBER, ROLE_ADMIN"/> -->
+<!-- 			</security:user-service> -->
+			<!-- 데이터 소스를 지정함 -->
+			<security:jdbc-user-service data-source-ref="dataSource"/> 
+<!-- 			root-context에 있는 bean id -->
+			<!-- 사용자가 정의한 비밀번호 암호화 처리기를 지정함 -->
+<!-- 			<security:password-encoder ref="customPasswordEncoder"/> -->
+		<!-- 비밀번호 암호화 처리기 지정 -->
+		<security:password-encoder ref="passwordEncoder"/>
+		</security:authentication-provider>
+	</security:authentication-manager>
+</beans>
