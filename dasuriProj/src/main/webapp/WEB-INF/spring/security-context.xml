@@ -57,7 +57,7 @@
 <!-- 				<security:user name="admin" password="{noop}java" authorities="ROLE_MEMBER, ROLE_ADMIN"/> -->
 <!-- 			</security:user-service> -->
 			<!-- 데이터 소스를 지정함 -->
-			<security:jdbc-user-service data-source-ref="dataSource"/> 
+<!-- 			<security:jdbc-user-service data-source-ref="dataSource"/>  -->
 <!-- 			root-context에 있는 bean id -->
 			<!-- 사용자가 정의한 비밀번호 암호화 처리기를 지정함 -->
 <!-- 			<security:password-encoder ref="customPasswordEncoder"/> -->

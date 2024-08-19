@@ -13,6 +13,9 @@
    </settings>
    <!-- 자주 사용하는 타입의 별칭을 세팅 -->
    <typeAliases>
-<!--        <typeAlias type="kr.or.ddit.vo.BookVO" alias="bookVo" />  -->
+       <typeAlias type="kr.or.ddit.vo.EmpVO" alias="empVo" /> 
+       <typeAlias type="kr.or.ddit.vo.CustVO" alias="custVo" /> 
+       <typeAlias type="kr.or.ddit.vo.CarVO" alias="carVo" /> 
+       <typeAlias type="kr.or.ddit.vo.PerSerVO" alias="perSerVo" /> 
    </typeAliases>
 </configuration>
