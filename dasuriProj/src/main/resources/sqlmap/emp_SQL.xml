@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.mapper.EmpMapper">
+
+<resultMap type="empVo" id="empMap">
+	<result property="empNum" column="EMP_NUM"/>
+	<result property="nm" column="NM"/>
+	<result property="addr" column="ADDR"/>
+	<result property="pne" column="PNE"/>
+	<result property="sal" column="SAL"/>
+	<result property="pnum" column="PNUM"/>
+	<result property="detAddr" column="DET_ADDR"/>
+	<result property="password" column="PASSWORD"/>
+	<result property="enabled" column="ENABLED"/>
+	<collection property="empAuthVOList" resultMap="authMap"/>
+	<collection property="perSerVOList" resultMap="perSerMap"/>
+</resultMap>
+
+<resultMap type="empAuthVo" id="authMap">
+	<result property="empNum" column="EMP_NUM"/>
+	<result property="auth" column="AUTH"/>
+</resultMap>
+
+<resultMap type="perSerVo" id="perSerMap">
+	<result property="empNum" column="EMP_NUM"/>
+	<result property="custNum" column="CUST_NUM"/>
+	<result property="carNum" column="CAR_NUM"/>
+	<result property="amt" column="AMT"/>
+	<result property="perTme" column="PER_TME"/>
+	<result property="perDet" column="PER_DET"/>
+	<result property="serNum" column="SER_NUM"/>
+</resultMap>
+
+<select id="list" parameterType="map" resultMap="empMap">
+	with t as (
+	select Row_Number() Over (Order By a.emp_num) as rnum,
+    a.EMP_NUM, a.NM, a.ADDR, a.PNE, a.SAL, a.PNUM, a.DET_ADDR,
+	b.CUST_NUM, b.CAR_NUM, b.AMT, b.PER_TME, b.SER_NUM
+	from emp a
+	left outer join per_ser b on a.emp_num=b.emp_num
+	where del_yn not in('Y')
+    OR del_yn is null
+	)
+	select t.*
+	from t
+	where t.rnum between (#{currentPage}-1)*#{size}+1 and (#{currentPage}*#{size}) 
+</select>
+
+<select id="getListTotal" resultType="int">
+	select count(*)
+	from emp a
+	left outer join per_ser b on a.emp_num=b.emp_num
+	where del_yn not in('Y')
+    OR del_yn is null
+</select>
+
+<select id="detail" parameterType="int" resultMap="empMap">
+	select a.EMP_NUM, a.NM, a.ADDR, a.PNE, a.SAL, a.PNUM, a.DET_ADDR,
+	b.CUST_NUM, b.CAR_NUM, b.AMT, b.PER_TME, b.SER_NUM
+	from emp a
+	left outer join per_ser b on a.emp_num=b.emp_num
+	where a.emp_num = #{empNum}
+</select>
+
+<insert id="registPost" parameterType="empVo">
+	<selectKey order="BEFORE" keyProperty="empNum" resultType="int">
+		select nvl(max(emp_num),0)+1
+		from emp
+	</selectKey>
+
+	insert into emp(EMP_NUM, NM, ADDR, PNE, SAL, PNUM, DET_ADDR)
+	values(#{empNum}, #{nm}, #{addr}, #{pne}, #{sal}, #{pnum}, #{detAddr})
+</insert>
+
+<update id="editPost" parameterType="empVo">
+	update emp
+	set nm=#{nm},
+	addr=#{addr},
+	pne=#{pne},
+	sal=#{sal},
+	pnum=#{pnum},
+	det_addr=#{detAddr}
+	where emp_num=#{empNum}
+</update>
+
+<update id="deletePost" parameterType="int">
+	update emp
+	set del_yn='Y'
+	where emp_num=#{empNum}
+</update>
+
+<select id="getLogin" resultMap="empMap" parameterType="String">
+	select *
+	from emp a, emp_auth b
+	where a.emp_num=b.emp_num
+	and a.enabled='1'
+	and a.emp_num=to_number(#{empNum})
+</select>
+</mapper>

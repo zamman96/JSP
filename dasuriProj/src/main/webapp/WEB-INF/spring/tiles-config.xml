@@ -18,4 +18,20 @@
    <definition name="*/*" extends="tiles-layout">
       <put-attribute name="body" value="/WEB-INF/views/{1}/{2}.jsp" />
    </definition>
+   
+   <!-- login layout -->
+   <definition name="tiles-layout2" template="/WEB-INF/views/tiles/index.jsp">
+      <put-attribute name="header" value="/WEB-INF/views/tiles/header.jsp" />
+      <put-attribute name="aside" value="/WEB-INF/views/tiles/aside.jsp" />
+      <put-attribute name="body" value="" />
+      <put-attribute name="footer" value="/WEB-INF/views/tiles/footer.jsp" />
+   </definition>
+   <!-- name의 *은 body의 value에서 1에 해당
+      controller에서 forwarding 시 return "1";
+      1) mav.setViewName("login")
+      2) return "login";
+    -->
+   <definition name="*" extends="tiles-layout2">
+      <put-attribute name="body" value="/WEB-INF/views/{1}.jsp" />
+   </definition>
 </tiles-definitions>

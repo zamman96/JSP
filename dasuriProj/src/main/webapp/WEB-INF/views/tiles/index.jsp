@@ -40,6 +40,7 @@
 <!-- summernote -->
 <link rel="stylesheet"
 	href="/resources/adminlte3/plugins/summernote/summernote-bs4.min.css">
+<link rel="stylesheet" href="/resources/css/sweetalert2.min.css">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 	<div class="wrapper">
@@ -146,6 +147,7 @@
 	<script src="/resources/adminlte3/dist/js/demo.js"></script>
 	<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <!-- 	<script src="/resources/adminlte3/dist/js/pages/dashboard.js"></script> -->
+	<script src="/resources/js/sweetalert2.min.js"></script>
 </body>
 </html>
 

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.mapper.PerSerMapper">
+
+<select id="list" parameterType="map" resultType="perSerVo">
+	with t as (
+	select Row_Number() Over (Order By ser_num) as rnum,
+	EMP_NUM, CUST_NUM, CAR_NUM, AMT, PER_TME, SER_NUM
+	from per_ser
+	)
+	select t.*
+	from t
+	where t.rnum between (#{currentPage}-1)*#{size}+1 and (#{currentPage}*#{size}) 
+</select>
+
+<select id="getListTotal" resultType="int">
+	select count(*)
+	from per_ser
+</select>
+
+<select id="detail" parameterType="int" resultType="perSerVo">
+	select EMP_NUM, CUST_NUM, CAR_NUM, AMT, PER_TME, SER_NUM, PER_DET
+	from per_ser
+	where ser_num = #{serNum}
+</select>
+
+<insert id="registPost" parameterType="perSerVo">
+<!-- 	SELECT NVL(MAX(SER_NUM),TO_CHAR(SYSDATE,'YYYYMMDD')||'000')+1 -->
+<!-- 	FROM PER_SER -->
+<!-- 	WHERE  SER_NUM LIKE TO_CHAR(SYSDATE,'YYYYMMDD') || '%' -->
+	<selectKey order="BEFORE" keyProperty="serNum" resultType="int">
+		select nvl(max(ser_num),0)+1
+		from per_ser
+	</selectKey>
+	
+
+	insert into per_ser(EMP_NUM, CUST_NUM, CAR_NUM, AMT, PER_TME, SER_NUM, PER_DET
+	<if test="fileGroupNo!=0">
+	,FILE_GROUP_NO
+	</if>
+	)
+	values(#{empNum},#{custNum}, #{carNum}, #{amt}, #{perTme}, #{serNum}, #{perDet}
+	<if test="fileGroupNo!=0">
+	,#{fileGroupNo}
+	</if>
+	)
+</insert>
+
+<update id="editPost" parameterType="perSerVo">
+	update per_ser
+	set emp_num=#{empNum},
+	cust_num=#{custNum},
+	car_num=#{carNum},
+	amt=#{amt},
+	per_tem=#{perTme}
+	where per_num=#{serNum}
+</update>
+
+<delete id="deletePost" parameterType="int">
+	delete per_ser
+	where ser_num=#{serNum}
+</delete>
+
+<insert id="registReplyPost" parameterType="perRelpyVo">
+	<selectKey order="BEFORE" keyProperty="repNo" resultType="int">
+		select nvl(max(rep_no),0)+1
+		from per_reply
+		where ser_num=#{serNum}
+	</selectKey>
+	insert into per_reply(REP_NO, SER_NUM, REP_CONTENT, REP_WRITER)
+	values(#{repNo},#{serNum},#{repContent},#{repWriter})
+</insert>
+
+<select id="replyList" parameterType="int" resultType="perRelpyVo">
+	select *
+	from per_reply a, emp b
+	where ser_num=#{serNum}
+	and a.rep_writer=b.emp_num
+</select>
+</mapper>

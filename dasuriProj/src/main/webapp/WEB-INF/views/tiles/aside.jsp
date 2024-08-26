@@ -29,8 +29,8 @@
           <img src="/resources/images/NpcNmlDuk11.png" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info" style="display:flex;">
-          <sec:authentication property="principal.memberVO" var="user"/>
-          <a href="#" class="d-block">${user.memName} (${user.memId})</a>
+          <sec:authentication property="principal.empVO" var="user"/>
+          <a href="#" class="d-block">${user.nm} (${user.empNum})</a>
           <form action="/logout" method="post" style="margin-left: 5px;">
 	          <button type="submit" class="btn btn-block btn-outline-primary btn-xs">로그아웃</button>
 	          <sec:csrfInput/>

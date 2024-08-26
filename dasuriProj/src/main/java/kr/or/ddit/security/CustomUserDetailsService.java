@@ -1,16 +1,23 @@
 package kr.or.ddit.security;
 
+import javax.inject.Inject;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import kr.or.ddit.mapper.EmpMapper;
+import kr.or.ddit.vo.EmpVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
+	
+	@Inject
+	EmpMapper empMapper;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -26,7 +33,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 	       enabled       -> enabled
 	       memberAuthVoList               -> authorities
 	       */
-		return null;
+		EmpVO empVO=this.empMapper.getLogin(username);
+		log.info("empVO >>"+empVO);
+		
+		return empVO == null?null:new CustomUser(empVO);
 	}
 
 }

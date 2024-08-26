@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.mapper.FileGroupMapper">
+<!-- file_group insert -->
+	<insert id="insertFileGroup" parameterType="fileGroupVo">
+		<!-- 숫자형 문자 + 숫자 => 숫자 -->
+		<selectKey order="BEFORE" keyProperty="fileGroupNo" resultType="long">
+			select nvl(max(file_group_no),to_char(sysdate,'YYYYMMDD')||'000')+1 file_group_no
+			from file_group
+			where to_char(sysdate,'YYYYMMDD') = to_char(file_regdate,'YYYYMMDD')
+		</selectKey>
+	
+		insert into file_group(file_group_no, file_regdate)
+		values(#{fileGroupNo}, sysdate)
+	</insert>
+	
+	<insert id="insertFileDetail" parameterType="fileDetailVo">
+		insert into file_detail(file_sn,file_group_no,file_original_name,
+				file_save_name,file_save_locate,file_size,file_ext,
+				file_mime,file_fancysize,file_save_date,file_downcount)
+		values(#{fileSn},#{fileGroupNo},#{fileOriginalName},#{fileSaveName},
+		#{fileSaveLocate},#{fileSize},#{fileExt},#{fileMime},#{fileFancysize},
+		sysdate, #{fileDowncount})
+	</insert>
+	
+	<delete id="fileGroupDelete" parameterType="fileGroupVo">
+		delete from file_group
+		where file_group_no=#{fileGroupNo}
+	</delete>
+	
+	<delete id="fileDetailDelete" parameterType="fileGroupVo">
+		delete from file_detail
+		where file_group_no=#{fileGroupNo}
+	</delete>
+</mapper>
+                  

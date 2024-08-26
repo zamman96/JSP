@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.mapper.CarMapper">
+
+<resultMap type="perSerVo" id="perSerMap">
+	<result property="custNum" column="EMP_NUM"/>
+	<result property="custNum" column="CUST_NUM"/>
+	<result property="carNum" column="CAR_NUM"/>
+	<result property="amt" column="AMT"/>
+	<result property="perTme" column="PER_TME"/>
+	<result property="serNum" column="SER_NUM"/>
+	<result property="perDet" column="PER_DET"/>
+</resultMap>
+
+<resultMap type="carVo" id="carMap">
+	<result property="carNum" column="CAR_NUM"/>
+	<result property="mfr" column="MFR"/>
+	<result property="myr" column="MYR"/>
+	<result property="drvDst" column="DRV_DST"/>
+	<result property="custNum" column="CUST_NUM"/>
+	<collection property="perSerVOList" resultMap="perSerMap" />
+</resultMap>
+
+<select id="list" parameterType="map" resultMap="carMap">
+	with t as (
+	select Row_Number() Over (Order By a.cust_num) as rnum,
+    b.EMP_NUM, b.AMT, b.PER_TME, b.SER_NUM,
+    a.CAR_NUM, a.MFR, a.MYR, a.DRV_DST
+	from car a
+	left outer join per_ser b on a.car_num=b.car_num
+	)
+	select t.*
+	from t
+	where t.rnum between (#{currentPage}-1)*#{size}+1 and (#{currentPage}*#{size}) 
+</select>
+
+<select id="getListTotal" resultType="int">
+	select count(*)
+	from car
+</select>
+
+<select id="detail" parameterType="String" resultMap="carMap">
+	select b.EMP_NUM, b.CAR_NUM, b.AMT, b.PER_TME, b.SER_NUM,
+    a.CAR_NUM, a.MFR, a.MYR, a.DRV_DST
+	from car a
+	left outer join per_ser b on a.car_num=b.car_num
+	where a.car_num = #{carNum}
+</select>
+
+<insert id="registPost" parameterType="carVo">
+	insert into car(CAR_NUM, MFR, MYR, DRV_DST, CUST_NUM)
+	values(#{carNum}, #{mfr}, #{myr}, #{drvDst}, #{custNum})
+</insert>
+
+<update id="editPost" parameterType="carVo">
+	update car
+	set mfr=#{mfr},
+	myr=#{myr},
+	drv_dst=#{drvDst},
+	cust_num=#{custNum}
+	where car_num=#{carNum}
+</update>
+
+<delete id="deletePost" parameterType="String">
+	delete car
+	where car_num=#{carNum}
+</delete>
+
+</mapper>

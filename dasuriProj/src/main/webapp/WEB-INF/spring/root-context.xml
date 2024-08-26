@@ -38,7 +38,7 @@
 	</bean>
 	
 	<bean id="uploadFolderDirect" class="java.lang.String">
-		<constructor-arg value="C:\\eGovFrameDev-3.10.0-64bit\\workspace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\springProj\\resources\\upload"></constructor-arg>
+		<constructor-arg value="C:\\eGovFrameDev-3.10.0-64bit\\workspace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\dasuriProj\\resources\\upload"></constructor-arg>
 	</bean>
 	 <!-- 
 	BasicDataSource dataSource = new BasicDataSource();

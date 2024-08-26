@@ -17,5 +17,10 @@
        <typeAlias type="kr.or.ddit.vo.CustVO" alias="custVo" /> 
        <typeAlias type="kr.or.ddit.vo.CarVO" alias="carVo" /> 
        <typeAlias type="kr.or.ddit.vo.PerSerVO" alias="perSerVo" /> 
+       <typeAlias type="kr.or.ddit.vo.MfrVO" alias="mfrVo" /> 
+       <typeAlias type="kr.or.ddit.vo.FileDetailVO" alias="fileDetailVo" /> 
+       <typeAlias type="kr.or.ddit.vo.FileGroupVO" alias="fileGroupVo" /> 
+       <typeAlias type="kr.or.ddit.vo.EmpAuthVO" alias="empAuthVo" /> 
+       <typeAlias type="kr.or.ddit.vo.PerReplyVO" alias="perRelpyVo" /> 
    </typeAliases>
 </configuration>

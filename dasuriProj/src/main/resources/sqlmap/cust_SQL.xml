@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.mapper.CustMapper">
+
+<resultMap type="custVo" id="custMap">
+	<result property="custNum" column="CUST_NUM"/>
+	<result property="custNm" column="CUST_NM"/>
+	<result property="addr" column="ADDR"/>
+	<result property="pne" column="PNE"/>
+	<result property="pnum" column="PNUM"/>
+	<result property="detAddr" column="DET_ADDR"/>
+	<collection property="carVOList" resultMap="carMap"/>
+	<collection property="perSerVOList" resultMap="perSerMap"/>
+</resultMap>
+
+<resultMap type="perSerVo" id="perSerMap">
+	<result property="custNum" column="EMP_NUM"/>
+	<result property="custNum" column="CUST_NUM"/>
+	<result property="carNum" column="CAR_NUM"/>
+	<result property="amt" column="AMT"/>
+	<result property="perTme" column="PER_TME"/>
+	<result property="perDet" column="PER_DET"/>
+	<result property="serNum" column="SER_NUM"/>
+</resultMap>
+
+<resultMap type="carVo" id="carMap">
+	<result property="carNum" column="CAR_NUM"/>
+	<result property="mfr" column="MFR"/>
+	<result property="myr" column="MYR"/>
+	<result property="drvDst" column="DRV_DST"/>
+	<result property="custNum" column="CUST_NUM"/>
+</resultMap>
+
+<select id="list" parameterType="map" resultMap="custMap">
+	with t as (
+	select Row_Number() Over (Order By a.cust_num) as rnum,
+    a.CUST_NUM, a.CUST_NM, a.ADDR, a.PNE, a.PNUM, a.DET_ADDR,
+    b.EMP_NUM, b.AMT, b.PER_TME, b.SER_NUM,
+    c.CAR_NUM, c.MFR, c.MYR, c.DRV_DST
+	from cust a
+	left outer join per_ser b on a.cust_num=b.cust_num
+	left outer join car c on a.cust_num=c.cust_num and b.car_num=c.car_num
+	)
+	select t.*
+	from t
+	where t.rnum between (#{currentPage}-1)*#{size}+1 and (#{currentPage}*#{size}) 
+</select>
+
+<select id="getListTotal" resultType="int">
+	select count(*)
+	from cust
+</select>
+
+<select id="detail" parameterType="int" resultMap="custMap">
+	select a.CUST_NUM, a.CUST_NM, a.ADDR, a.PNE, a.PNUM, a.DET_ADDR,
+    b.EMP_NUM, c.CAR_NUM, b.AMT, b.PER_TME, b.SER_NUM,
+    c.MFR, c.MYR, c.DRV_DST
+	from cust a
+	left outer join per_ser b on a.cust_num=b.cust_num
+	left outer join car c on a.cust_num=c.cust_num
+	where a.cust_num = #{custNum}
+</select>
+
+<insert id="registPost" parameterType="custVo">
+	<selectKey order="BEFORE" keyProperty="custNum" resultType="int">
+		select nvl(max(cust_num),0)+1
+		from cust
+	</selectKey>
+
+	insert into cust(CUST_NUM, CUST_NM, ADDR, PNE, PNUM, DET_ADDR)
+	values(#{custNum}, #{custNm}, #{addr}, #{pne}, #{pnum}, #{detAddr})
+</insert>
+
+<update id="editPost" parameterType="custVo">
+	update cust
+	set cust_nm=#{custNm},
+	addr=#{addr},
+	pne=#{pne},
+	pnum=#{pnum},
+	det_addr=#{detAddr}
+	where cust_num=#{custNum}
+</update>
+
+<delete id="deletePost" parameterType="int">
+	delete cust
+	where cust_num=#{custNum}
+</delete>
+
+</mapper>
