@@ -6,6 +6,23 @@
 <link type="text/css" href="/resources/ckeditor5/sample/css/sample.css" rel="stylesheet" media="screen"/>
 <script type="text/javascript" src="/resources/ckeditor5/ckeditor.js"></script>
 <script type="text/javascript" src="/resources/js/jquery.min.js"></script>
+<script>
+$(function(){
+	$(document).on('click','.edit',function(){
+// 		let content = $(this).parent().parent().html();
+		let repNo = $(this).parent().parent().data("num");
+		let cont = $(this).parent().parent().children('.repContent').html();
+		let data = {
+				"repNo":repNo,
+				"repContent":cont
+		};
+		console.log(data);
+		//modal에 반영
+		$("#modalRepNo").val(repNo);
+		$("#modalRepContent").val(cont);
+	})
+})
+</script>
 <div class="card card-info">
 	<div class="card-header">
 		<h2>수리 서비스 상세</h2>
@@ -90,18 +107,46 @@
       <div class="d-flex mb-4">
        <!-- Parent comment-->
        <div class="flex-shrink-0" style="margin-right:10px;"><img class="img-circle elevation-2" style="width: 50px;" src="/resources/images/NpcNmlDuk11.png" alt="..."></div>
-       <div class="ms-3">
+       <div class="ms-3" data-num="${reply.repNo}">
        <div style="display: flex; flex-direction: row;">
 			<div class="fw-bold" style="font-weight: bold;">${reply.nm}</div>
 			<c:if test="${reply.repWriter==user.empNum}">
-				<button type="button" class="btn btn-warning btn-sm">수정</button>
+				<button type="button"  data-toggle="modal" data-target="#modalUpdateReply" class="btn btn-warning btn-sm edit">수정</button>
 				<button type="button" class="btn btn-danger btn-sm">삭제</button>
 			</c:if> 
        </div>
 			<div style="font-size:0.7rem; color: gray;"><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${reply.repDate}"/></div>
-			${reply.repContent}
+			<div class="repContent">${reply.repContent}</div>
    		</div>
       </div>
 	</c:forEach>
    </div>
 </div>
+
+<!-- /// 댓글 수정 모달 시작 /// -->
+<div class="modal fade" id="modalUpdateReply">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">댓글 수정</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>
+        	<input type="text" id="modalRepNo" />
+        	<input type="text" id="modalRepContent" 
+        		class="form-control form-control-sm" placeholder="댓글 등록" required />
+        </p>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" id="idUpdate" class="btn btn-primary">저장</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /// 댓글 수정 모달 끝 /// -->

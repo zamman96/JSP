@@ -26,6 +26,7 @@
 			<param-value>/WEB-INF/spring/appServlet/servlet-context.xml</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
+		<async-supported>true</async-supported>
 		
 		<!-- web.xml의 설정은 WAS(Tomcat) 자체 설정일 뿐임. -->
 		<!-- multipart-config : 메모리사이즈, 업로드 파일 저장 위치, 최대 크기 설정 -->
